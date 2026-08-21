@@ -176,7 +176,7 @@ function lockApp() {
   $("#unlockSection").classList.remove("hidden");
   $("#setupPINSection").classList.add("hidden");
 
-  $("#lockTitle").textContent = "Dentistry";
+  $("#lockTitle").textContent = "AeroDent";
   $("#lockMessage").textContent = "Enter your PIN to continue";
 
   setTimeout(() => {
@@ -1790,122 +1790,99 @@ function bindView() {
         ...state.settings,
         id: 1,
         ...Object.fromEntries(new FormData(settingsForm)),
-        currencySymbol: "SYR",
       });
       toast(t("saved"));
       await refresh();
     };
   const xray = $("#xrayUpload");
 
-  if (xray) {
+if (xray) {
     xray.onchange = async () => {
-      const file = xray.files[0];
+        const file = xray.files[0];
 
-      if (!file) {
-        return;
-      }
+        if (!file) {
+            return;
+        }
 
-      if (!state.selectedPatient) {
-        toast("Please select a patient first.");
+        if (!state.selectedPatient) {
+            toast(
+                t("selectPatientFirst")
+            );
+
+            xray.value = "";
+            return;
+        }
+
+        try {
+            const compressed =
+                await compressXray(file);
+
+            const base64Data =
+                await blobToBase64(
+                    compressed
+                );
+
+            const xrayType =
+                $("#xrayType")?.value ||
+                "other";
+
+            const toothNumber =
+                Number(
+                    $("#xrayToothNumber")?.value
+                ) || null;
+
+            const notes =
+                $("#xrayNotes")?.value.trim() ||
+                "";
+
+            await dbPut("xrays", {
+                patientId:
+                    state.selectedPatient.id,
+
+                filename:
+                    file.name,
+
+                base64Data,
+
+                mimeType:
+                    "image/webp",
+
+                originalMimeType:
+                    file.type,
+
+                toothTag:
+                    toothNumber,
+
+                type:
+                    xrayType,
+
+                date:
+                    today(),
+
+                notes:
+                    notes,
+            });
+
+            toast(
+                t("xrayUploaded")
+            );
+
+            await refresh();
+
+        } catch (error) {
+            console.error(
+                "X-ray upload failed:",
+                error
+            );
+
+            toast(
+                t("unableProcessXray")
+            );
+        }
 
         xray.value = "";
-        return;
-      }
-
-      try {
-        const compressed = await compressXray(file);
-
-        const base64Data = await blobToBase64(compressed);
-
-        const xrayType = $("#xrayType")?.value || "other";
-
-        const toothNumber = Number($("#xrayToothNumber")?.value) || null;
-
-        const notes = $("#xrayNotes")?.value.trim() || "";
-
-        await dbPut("xrays", {
-          patientId: state.selectedPatient.id,
-
-          filename: file.name,
-
-          base64Data,
-
-          mimeType: "image/webp",
-
-          originalMimeType: file.type,
-
-          toothTag: toothNumber,
-
-          type: xrayType,
-
-          date: today(),
-
-          notes,
-        });
-
-        toast("X-ray uploaded successfully.");
-
-        await refresh();
-      } catch (error) {
-        console.error("X-ray upload failed:", error);
-
-        toast("Unable to process X-ray.");
-      }
-
-      xray.value = "";
     };
-  }
-
-  if (xray) {
-    xray.onchange = async () => {
-      const file = xray.files[0];
-
-      if (!file) {
-        return;
-      }
-
-      if (!state.selectedPatient) {
-        toast(t("selectPatientFirst"));
-
-        xray.value = "";
-        return;
-      }
-
-      try {
-        const compressed = await compressXray(file);
-
-        const base64Data = await blobToBase64(compressed);
-
-        await dbPut("xrays", {
-          patientId: state.selectedPatient.id,
-
-          filename: file.name,
-
-          base64Data,
-
-          mimeType: "image/webp",
-
-          originalMimeType: file.type,
-
-          toothTag: state.selectedTooth,
-
-          date: today(),
-
-          notes: "",
-        });
-
-        toast(t("xrayUploaded"));
-
-        await refresh();
-      } catch (error) {
-        console.error("X-ray upload failed:", error);
-
-        toast(t("unableProcessXray"));
-      }
-
-      xray.value = "";
-    };
-  }
+}
   const saveToothNote = $("#saveToothNote");
   if (saveToothNote) saveToothNote.onclick = saveCurrentToothNote;
   $$("[data-action]").forEach(
