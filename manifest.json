@@ -1,6 +1,6 @@
 {
-  "name": "Mizan Dental Practice",
-  "short_name": "Mizan Dental",
+  "name": "Dentistry",
+  "short_name": "Dentistry",
   "description": "Offline-first bilingual dental practice management",
   "start_url": "./index.html",
   "display": "standalone",

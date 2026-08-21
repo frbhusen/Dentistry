@@ -124,6 +124,8 @@
   max-width: 1600px;
   margin-inline: auto;
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .page-heading {
   padding-bottom: 4px;
@@ -1445,6 +1447,39 @@ textarea {
   animation: rise 0.2s ease;
 }
 
+
+/* Custom App Footer */
+.app-footer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding-top: 24px;
+  
+  /* Change this from 40px to auto */
+  margin-top: auto; 
+  
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+}
+.app-footer p {
+  margin: 0;
+}
+
+.app-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 700;
+  transition: color 0.15s ease;
+}
+
+.app-footer a:hover {
+  color: #036fa6;
+  text-decoration: underline;
+}
+
+
 @keyframes rise {
   from {
     opacity: 0;
@@ -1596,5 +1631,11 @@ textarea {
 
   .invoice-print {
     border: 0 !important;
+  }
+}
+/* Hide footer during printing */
+@media print {
+  .print-hidden {
+    display: none !important;
   }
 }

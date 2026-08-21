@@ -156,7 +156,7 @@ const I18N = {
     duration: "المدة",
     instructions: "التعليمات",
     upload: "رفع صورة",
-    clinic: "بيانات العيادة",
+    clinic: "اسم العيادة",
     doctor: "الطبيب",
     address: "العنوان",
     currency: "العملة",
