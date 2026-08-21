@@ -1,6 +1,6 @@
 {
-  "name": "Dentistry",
-  "short_name": "Dentistry",
+  "name": "AeroDent",
+  "short_name": "AeroDent",
   "description": "Offline-first bilingual dental practice management",
   "start_url": "./index.html",
   "display": "standalone",

@@ -1,3 +1,65 @@
+.lock-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: grid;
+    place-items: center;
+
+    background: #f8fafc;
+}
+
+.lock-screen.hidden {
+    display: none;
+}
+
+.lock-card {
+    width: min(380px, calc(100% - 32px));
+    padding: 32px;
+
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+
+    text-align: center;
+}
+
+.lock-card .brand-mark {
+    margin: 0 auto 16px;
+}
+
+.lock-card h1 {
+    margin: 0 0 6px;
+}
+
+.lock-card p {
+    color: var(--muted);
+}
+
+.lock-card input {
+    width: 100%;
+    margin: 20px 0 12px;
+
+    padding: 12px;
+    text-align: center;
+
+    letter-spacing: 6px;
+    font-size: 22px;
+
+    border: 1px solid var(--line);
+    border-radius: 8px;
+}
+
+.pin-error {
+    color: var(--danger) !important;
+    min-height: 20px;
+}
+.app-locked {
+    filter: blur(8px);
+    pointer-events: none;
+    user-select: none;
+}
 .calendar-week {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
@@ -253,6 +315,122 @@
 .treatment-patient-picker {
   margin-bottom: 18px;
   max-width: 420px;
+}
+.treatment-status-select {
+    min-width: 130px;
+
+    padding: 6px 8px;
+
+    border: 1px solid var(--line);
+
+    border-radius: 7px;
+
+    background: #fff;
+
+    color: var(--ink);
+
+    font-size: 12px;
+}
+.treatment-plan-list {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.treatment-plan-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    padding: 14px;
+
+    border: 1px solid var(--line);
+    border-radius: 10px;
+
+    background: #fff;
+}
+
+.treatment-plan-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.treatment-plan-main strong {
+    display: block;
+}
+
+.treatment-plan-main small {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+}
+
+.treatment-plan-tooth {
+    width: 40px;
+    height: 40px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border-radius: 8px;
+
+    background: #f0f9ff;
+    color: var(--primary);
+
+    font-weight: 700;
+}
+
+.treatment-plan-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@media (max-width: 700px) {
+    .treatment-plan-item {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .treatment-plan-details {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+}
+.treatment-plan-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.treatment-plan-delete {
+    min-width: 36px;
+    padding-inline: 10px;
+
+    color: var(--danger);
+
+    border: 1px solid #fecaca;
+
+    background: #fff;
+}
+
+.treatment-plan-delete:hover {
+    background: var(--danger-bg);
+}
+
+@media (max-width: 700px) {
+    .treatment-plan-actions {
+        width: 100%;
+    }
+
+    .treatment-plan-actions .button {
+        flex: 1;
+    }
 }
 :root {
   --surface: #fff;
@@ -1433,6 +1611,99 @@ textarea {
   padding: 9px;
   font-size: 11px;
 }
+.xray-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.xray-delete-button {
+    flex: 0 0 auto;
+
+    width: 30px;
+    height: 30px;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid #fecaca;
+    border-radius: 7px;
+
+    background: #fff;
+    color: var(--danger);
+
+    font-size: 18px;
+    line-height: 1;
+}
+
+.xray-delete-button:hover {
+    background: var(--danger-bg);
+}
+
+.xray-upload-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+
+    margin: 18px 0 24px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid var(--line);
+
+    border-radius: 10px;
+}
+
+.xray-upload-form .full-span {
+    grid-column: 1 / -1;
+}
+
+.xray-upload-form > .button {
+    width: fit-content;
+}
+
+.xray-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+
+    margin-top: 6px;
+}
+
+.xray-meta span {
+    padding: 3px 7px;
+
+    border-radius: 5px;
+
+    background: #f1f5f9;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.xray-notes {
+    margin: 8px 0 0;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+    .xray-upload-form {
+        grid-template-columns: 1fr;
+    }
+
+    .xray-upload-form .full-span {
+        grid-column: auto;
+    }
+}
 
 .toast {
   position: fixed;
@@ -1479,6 +1750,31 @@ textarea {
   text-decoration: underline;
 }
 
+.undo-toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.undo-toast button {
+    padding: 5px 10px;
+
+    background: transparent;
+
+    border: 1px solid currentColor;
+    border-radius: 6px;
+
+    color: inherit;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.undo-toast button:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
 
 @keyframes rise {
   from {

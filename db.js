@@ -1,15 +1,19 @@
 const DB_NAME = "mizan-dental-db";
-const DB_VERSION = 1;
+
+const DB_VERSION = 2;
+
 const STORES = [
-  "patients",
-  "odontograms",
-  "appointments",
-  "treatments",
-  "invoices",
-  "prescriptions",
-  "xrays",
-  "settings",
+    "patients",
+    "odontograms",
+    "appointments",
+    "treatments",
+    "treatmentPlans",
+    "invoices",
+    "prescriptions",
+    "xrays",
+    "settings",
 ];
+
 let database;
 function openDB() {
   return new Promise((resolve, reject) => {
@@ -130,6 +134,29 @@ async function dbImport(data) {
     await dbClear(store);
     for (const item of data[store]) await dbPut(store, item);
   }
+}
+async function safeImport(data) {
+    const backup = await dbExport();
+
+    try {
+        validateImportedData(data);
+
+        await dbImport(data);
+
+        const verification = await dbExport();
+
+        if (!verifyImportedData(data, verification)) {
+            throw new Error("Import verification failed");
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Import failed:", error);
+
+        await dbImport(backup);
+
+        throw new Error("Import failed. Previous data was restored.");
+    }
 }
 async function seedDatabase() {
   if ((await dbGetAll("patients")).length) return;

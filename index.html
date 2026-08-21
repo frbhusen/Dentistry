@@ -11,95 +11,361 @@
 </head>
 
 <body>
+
+    <!-- PIN LOCK SCREEN -->
+    <div id="lockScreen" class="lock-screen hidden">
+        <div class="lock-card">
+
+            <div class="brand-mark">✦</div>
+
+            <h1 id="lockTitle" data-i18n="lockTitle">Dentistry</h1>
+
+            <p id="lockMessage" data-i18n="lockMessage">
+                Enter your PIN to continue
+            </p>
+
+            <!-- Existing PIN -->
+            <div id="unlockSection">
+                <input
+                    type="password"
+                    id="pinInput"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="off"
+                    placeholder="PIN"
+                >
+
+                <button
+                    class="button button-primary full"
+                    id="unlockBtn"
+                    type="button"
+                    data-i18n="unlockBtn"
+                >
+                    Unlock
+                </button>
+            </div>
+
+            <!-- First-time PIN setup -->
+            <div id="setupPINSection" class="hidden">
+
+                <input
+                    type="password"
+                    id="newPINInput"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="new-password"
+                    placeholder="New PIN"
+                >
+
+                <input
+                    type="password"
+                    id="confirmPINInput"
+                    inputmode="numeric"
+                    maxlength="6"
+                    autocomplete="new-password"
+                    placeholder="Confirm PIN"
+                >
+
+                <button
+                    class="button button-primary full"
+                    id="savePINBtn"
+                    type="button"
+                    data-i18n="savePINBtn"
+                >
+                    Set PIN
+                </button>
+
+            </div>
+
+            <p id="pinError" class="pin-error"></p>
+
+        </div>
+    </div>
+
+    <!-- APPLICATION -->
     <div class="app-shell">
+
         <header class="topbar">
+
             <div class="brand">
+
                 <div class="brand-mark">✦</div>
+
                 <div>
-                    <strong data-i18n="appName">Dentistry</strong><span data-i18n="tagline">Practice command
-                        center</span>
+                    <strong data-i18n="appName">Dentistry</strong>
+                    <span data-i18n="tagline">
+                        Practice command center
+                    </span>
                 </div>
+
             </div>
+
             <div class="top-actions">
-                <label class="search"><span>⌕</span><input id="globalSearch" data-i18n-placeholder="search"
-                        placeholder="Search patients by name or phone" /></label><button class="button button-primary"
-                    id="newPatientBtn">
-                    ＋ <span data-i18n="newPatient">New patient</span></button><button class="button button-ghost"
-                    id="langBtn">العربية</button><span class="clock" id="clock"></span><button class="icon-button"
-                    id="backupBtn" title="Backup">⇩</button>
+
+                <label class="search">
+                    <span>⌕</span>
+
+                    <input
+                        id="globalSearch"
+                        data-i18n-placeholder="search"
+                        placeholder="Search patients by name or phone"
+                    />
+                </label>
+
+                <button
+                    class="button button-primary"
+                    id="newPatientBtn"
+                >
+                    ＋
+                    <span data-i18n="newPatient">
+                        New patient
+                    </span>
+                </button>
+
+                <button
+                    class="button button-ghost"
+                    id="langBtn"
+                >
+                    العربية
+                </button>
+
+                <span
+                    class="clock"
+                    id="clock"
+                ></span>
+
+                <button
+                    class="icon-button"
+                    id="backupBtn"
+                    title="Backup"
+                >
+                    ⇩
+                </button>
+
             </div>
+
         </header>
+
         <div class="workspace">
+
             <aside class="sidebar">
+
                 <div class="profile">
-                    <div class="avatar">DR</div>
-                    <div>
-                        <b id="doctorName">Dr. ------</b><small id="clinicName">------ Dental Clinic</small>
+
+                    <div class="avatar">
+                        DR
                     </div>
+
+                    <div>
+                        <b id="doctorName">
+                            Dr. ------
+                        </b>
+
+                        <small id="clinicName">
+                            ------ Dental Clinic
+                        </small>
+                    </div>
+
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true"
-                    aria-label="Collapse sidebar">
+
+                <button
+                    class="sidebar-toggle"
+                    id="sidebarToggle"
+                    type="button"
+                    aria-expanded="true"
+                    aria-label="Collapse sidebar"
+                >
                     ‹
                 </button>
+
                 <nav id="nav"></nav>
+
                 <div class="sidebar-foot">
-                    <span class="status-dot"></span><span data-i18n="saved">Saved locally</span>
+
+                    <span class="status-dot"></span>
+
+                    <span data-i18n="saved">
+                        Saved locally
+                    </span>
+
                 </div>
+
             </aside>
+
             <main class="main">
+
                 <section class="page-heading">
+
                     <div>
+
                         <p class="eyebrow">
-                            DASHBOARD / <span id="currentSection">OVERVIEW</span>
+                            DASHBOARD /
+                            <span id="currentSection">
+                                OVERVIEW
+                            </span>
                         </p>
-                        <h1 data-i18n="dashboard">Clinical overview</h1>
+
+                        <h1 data-i18n="dashboard">
+                            Clinical overview
+                        </h1>
+
                     </div>
+
                     <div class="heading-date">
-                        <span id="dateLabel"></span><b id="selectedPatientLabel">No patient selected</b>
+
+                        <span id="dateLabel"></span>
+
+                        <b id="selectedPatientLabel">
+                            No patient selected
+                        </b>
+
                     </div>
+
                 </section>
+
                 <div id="view"></div>
-                <!-- Add the footer here -->
+
                 <footer class="app-footer print-hidden">
-                    <p>Made by: <a href="https://husr0.codes" target="_blank" rel="noopener noreferrer">Hussein Rajab</a></p>
-                    <p><a href="mailto:husen_.rajb@outlook.com">husen_.rajb@outlook.com</a></p>
+
+                    <p>
+                        Made by:
+                        <a
+                            href="https://husr0.codes"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Hussein Rajab
+                        </a>
+                    </p>
+
+                    <p>
+                        <a href="mailto:husen_.rajb@outlook.com">
+                            husen_.rajb@outlook.com
+                        </a>
+                    </p>
+
                 </footer>
+
             </main>
+
         </div>
+
     </div>
-    <div class="drawer-backdrop" id="drawerBackdrop"></div>
-    <aside class="context-drawer" id="drawer">
+
+    <div
+        class="drawer-backdrop"
+        id="drawerBackdrop"
+    ></div>
+
+    <aside
+        class="context-drawer"
+        id="drawer"
+    >
+
         <div class="drawer-head">
+
             <div>
-                <span class="eyebrow" data-i18n="tooth">Tooth</span>
-                <h2 id="drawerTooth">#14</h2>
-                <p id="drawerAnatomy">Upper left first molar</p>
+
+                <span
+                    class="eyebrow"
+                    data-i18n="tooth"
+                >
+                    Tooth
+                </span>
+
+                <h2 id="drawerTooth">
+                    #14
+                </h2>
+
+                <p id="drawerAnatomy">
+                    Upper left first molar
+                </p>
+
             </div>
-            <button class="icon-button" id="closeDrawer">×</button>
+
+            <button
+                class="icon-button"
+                id="closeDrawer"
+            >
+                ×
+            </button>
+
         </div>
-        <div class="surface-list" id="surfaceList"></div>
+
         <div class="drawer-section">
-            <label class="eyebrow" data-i18n="procedure">Procedure</label>
-            <div class="action-grid" id="toothActions"></div>
+
+            <label
+                class="eyebrow"
+                data-i18n="procedure"
+            >
+                Procedure
+            </label>
+
+            <div
+                class="action-grid"
+                id="toothActions"
+            ></div>
+
         </div>
+
         <div class="drawer-section">
-            <label class="eyebrow" data-i18n="note">Clinical note</label><textarea id="toothNote" rows="4"
-                placeholder="Add a note..."></textarea><button class="button button-primary full" id="saveToothNote"
-                data-i18n="save">
+
+            <label
+                class="eyebrow"
+                data-i18n="note"
+            >
+                Clinical note
+            </label>
+
+            <textarea
+                id="toothNote"
+                rows="4"
+                placeholder="Add a note..."
+            ></textarea>
+
+            <button
+                class="button button-primary full"
+                id="saveToothNote"
+                data-i18n="save"
+            >
                 Save
             </button>
+
         </div>
+
     </aside>
-    <div class="modal" id="modal">
+
+    <div
+        class="modal"
+        id="modal"
+    >
+
         <div class="modal-card">
-            <button class="icon-button modal-close" id="modalClose">×</button>
+
+            <button
+                class="icon-button modal-close"
+                id="modalClose"
+            >
+                ×
+            </button>
+
             <div id="modalContent"></div>
+
         </div>
+
     </div>
-    <input type="file" id="importInput" accept=".xls,.html,text/html,application/vnd.ms-excel" hidden />
+
+    <input
+        type="file"
+        id="importInput"
+        accept=".xls,.html,text/html,application/vnd.ms-excel"
+        hidden
+    />
+
     <script src="i18n.js"></script>
     <script src="db.js"></script>
     <script src="app.js"></script>
+
 </body>
 
 </html>

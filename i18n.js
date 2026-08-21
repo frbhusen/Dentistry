@@ -1,6 +1,6 @@
 const I18N = {
   en: {
-    appName: "Dentistry",
+    appName: "AeroDent",
     tagline: "Practice command center",
     dashboard: "Clinical overview",
     odontogram: "Odontogram",
@@ -97,9 +97,46 @@ const I18N = {
       "This permanently deletes all local records. Type WIPE to confirm.",
     restored: "Backup restored",
     exported: "Backup exported",
+    lockTitle: "AeroDent",
+    lockMessage: "Enter your PIN to continue",
+    unlockBtn: "Unlock",
+    xrayType: "X-ray type",
+toothNumber: "Tooth number",
+clinicalNotes: "Clinical notes",
+periapical: "Periapical",
+bitewing: "Bitewing",
+panoramic: "Panoramic",
+cephalometric: "Cephalometric",
+cbct: "CBCT",
+other: "Other",
+deleteXray: "Delete X-ray",
+xrayUploaded: "X-ray uploaded successfully",
+selectPatientFirst: "Please select a patient first",
+planned: "Planned",
+accepted: "Accepted",
+scheduled: "Scheduled",
+inProgress: "In Progress",
+completed: "Completed",
+cancelled: "Cancelled",
+changeStatus: "Change status",
+treatmentPlan: "Treatment Plan",
+addTreatmentPlan: "Add treatment plan",
+diagnosis: "Diagnosis",
+priority: "Priority",
+low: "Low",
+medium: "Medium",
+high: "High",
+noTreatmentPlans: "No treatment plans yet",
+deleteTreatmentPlan: "Delete treatment plan",
+treatmentPlanDeleted: "Treatment plan deleted",
+unableDeleteTreatmentPlan: "Unable to delete treatment plan",
+unableSaveTreatmentPlan: "Unable to save treatment plan",
   },
   ar: {
-    appName: "Dentistry",
+    appName: "AeroDent",
+    lockTitle: "AeroDent",
+    lockMessage: "أدخل كلمة المرور للاستمرار",
+    unlockBtn: "تسجيل",
     tagline: "مركز إدارة العيادة",
     dashboard: "نظرة سريرية",
     odontogram: "مخطط الأسنان",
@@ -195,6 +232,38 @@ const I18N = {
     confirmWipe: "سيتم حذف كل السجلات المحلية نهائياً. اكتب WIPE للتأكيد.",
     restored: "تم استرجاع النسخة",
     exported: "تم تصدير النسخة",
+    xrayType: "نوع الأشعة",
+toothNumber: "رقم السن",
+clinicalNotes: "ملاحظات سريرية",
+periapical: "حول ذروية",
+bitewing: "بايت وينغ",
+panoramic: "بانورامية",
+cephalometric: "سيفالومترية",
+cbct: "CBCT",
+other: "أخرى",
+deleteXray: "حذف الأشعة",
+xrayUploaded: "تم رفع الأشعة بنجاح",
+selectPatientFirst: "يرجى اختيار مريض أولاً",
+planned: "مخطط",
+accepted: "مقبول",
+scheduled: "مجدول",
+inProgress: "قيد التنفيذ",
+completed: "مكتمل",
+cancelled: "ملغي",
+changeStatus: "تغيير الحالة",
+treatmentPlan: "الخطة العلاجية",
+addTreatmentPlan: "إضافة خطة علاجية",
+diagnosis: "التشخيص",
+priority: "الأولوية",
+low: "منخفضة",
+medium: "متوسطة",
+high: "عالية",
+noTreatmentPlans: "لا توجد خطط علاجية بعد",
+deleteTreatmentPlan: "حذف الخطة العلاجية",
+treatmentPlanDeleted: "تم حذف الخطة العلاجية",
+unableDeleteTreatmentPlan: "تعذر حذف الخطة العلاجية",
+unableSaveTreatmentPlan: "تعذر حفظ الخطة العلاجية",
+
   },
 };
 I18N.en.export = "Export Excel";
@@ -227,4 +296,11 @@ I18N.en.confirmDeletePatient =
   "Delete this patient and all related clinical records?";
 I18N.ar.confirmDeletePatient = "هل تريد حذف هذا المريض وكل سجلاته السريرية؟";
 let currentLanguage = "ar";
-const t = (key) => I18N[currentLanguage][key] || I18N.en[key] || key;
+
+function t(key) {
+    return (
+        I18N[currentLanguage]?.[key] ||
+        I18N.en?.[key] ||
+        key
+    );
+}
