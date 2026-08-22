@@ -26,21 +26,10 @@
 
             <!-- Existing PIN -->
             <div id="unlockSection">
-                <input
-                    type="password"
-                    id="pinInput"
-                    inputmode="numeric"
-                    maxlength="6"
-                    autocomplete="off"
-                    placeholder="PIN"
-                >
+                <input type="password" id="pinInput" inputmode="numeric" maxlength="6" autocomplete="off"
+                    placeholder="PIN">
 
-                <button
-                    class="button button-primary full"
-                    id="unlockBtn"
-                    type="button"
-                    data-i18n="unlockBtn"
-                >
+                <button class="button button-primary full" id="unlockBtn" type="button" data-i18n="unlockBtn">
                     Unlock
                 </button>
             </div>
@@ -48,30 +37,13 @@
             <!-- First-time PIN setup -->
             <div id="setupPINSection" class="hidden">
 
-                <input
-                    type="password"
-                    id="newPINInput"
-                    inputmode="numeric"
-                    maxlength="6"
-                    autocomplete="new-password"
-                    placeholder="New PIN"
-                >
+                <input type="password" id="newPINInput" inputmode="numeric" maxlength="6" autocomplete="new-password"
+                    placeholder="New PIN">
 
-                <input
-                    type="password"
-                    id="confirmPINInput"
-                    inputmode="numeric"
-                    maxlength="6"
-                    autocomplete="new-password"
-                    placeholder="Confirm PIN"
-                >
+                <input type="password" id="confirmPINInput" inputmode="numeric" maxlength="6"
+                    autocomplete="new-password" placeholder="Confirm PIN">
 
-                <button
-                    class="button button-primary full"
-                    id="savePINBtn"
-                    type="button"
-                    data-i18n="savePINBtn"
-                >
+                <button class="button button-primary full" id="savePINBtn" type="button" data-i18n="savePINBtn">
                     Set PIN
                 </button>
 
@@ -105,40 +77,24 @@
                 <label class="search">
                     <span>⌕</span>
 
-                    <input
-                        id="globalSearch"
-                        data-i18n-placeholder="search"
-                        placeholder="Search patients by name or phone"
-                    />
+                    <input id="globalSearch" data-i18n-placeholder="search"
+                        placeholder="Search patients by name or phone" />
                 </label>
 
-                <button
-                    class="button button-primary"
-                    id="newPatientBtn"
-                >
+                <button class="button button-primary" id="newPatientBtn">
                     ＋
                     <span data-i18n="newPatient">
                         New patient
                     </span>
                 </button>
 
-                <button
-                    class="button button-ghost"
-                    id="langBtn"
-                >
+                <button class="button button-ghost" id="langBtn">
                     العربية
                 </button>
 
-                <span
-                    class="clock"
-                    id="clock"
-                ></span>
+                <span class="clock" id="clock"></span>
 
-                <button
-                    class="icon-button"
-                    id="backupBtn"
-                    title="Backup"
-                >
+                <button class="icon-button" id="backupBtn" title="Backup">
                     ⇩
                 </button>
 
@@ -168,13 +124,8 @@
 
                 </div>
 
-                <button
-                    class="sidebar-toggle"
-                    id="sidebarToggle"
-                    type="button"
-                    aria-expanded="true"
-                    aria-label="Collapse sidebar"
-                >
+                <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true"
+                    aria-label="Collapse sidebar">
                     ‹
                 </button>
 
@@ -229,11 +180,7 @@
 
                     <p>
                         Made by:
-                        <a
-                            href="https://husr0.codes"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
+                        <a href="https://husr0.codes" target="_blank" rel="noopener noreferrer">
                             Hussein Rajab
                         </a>
                     </p>
@@ -252,24 +199,15 @@
 
     </div>
 
-    <div
-        class="drawer-backdrop"
-        id="drawerBackdrop"
-    ></div>
+    <div class="drawer-backdrop" id="drawerBackdrop"></div>
 
-    <aside
-        class="context-drawer"
-        id="drawer"
-    >
+    <aside class="context-drawer" id="drawer">
 
         <div class="drawer-head">
 
             <div>
 
-                <span
-                    class="eyebrow"
-                    data-i18n="tooth"
-                >
+                <span class="eyebrow" data-i18n="tooth">
                     Tooth
                 </span>
 
@@ -283,10 +221,7 @@
 
             </div>
 
-            <button
-                class="icon-button"
-                id="closeDrawer"
-            >
+            <button class="icon-button" id="closeDrawer">
                 ×
             </button>
 
@@ -294,40 +229,23 @@
 
         <div class="drawer-section">
 
-            <label
-                class="eyebrow"
-                data-i18n="procedure"
-            >
+            <label class="eyebrow" data-i18n="procedure">
                 Procedure
             </label>
 
-            <div
-                class="action-grid"
-                id="toothActions"
-            ></div>
+            <div class="action-grid" id="toothActions"></div>
 
         </div>
 
         <div class="drawer-section">
 
-            <label
-                class="eyebrow"
-                data-i18n="note"
-            >
+            <label class="eyebrow" data-i18n="note">
                 Clinical note
             </label>
 
-            <textarea
-                id="toothNote"
-                rows="4"
-                placeholder="Add a note..."
-            ></textarea>
+            <textarea id="toothNote" rows="4" placeholder="Add a note..."></textarea>
 
-            <button
-                class="button button-primary full"
-                id="saveToothNote"
-                data-i18n="save"
-            >
+            <button class="button button-primary full" id="saveToothNote" data-i18n="save">
                 Save
             </button>
 
@@ -335,17 +253,11 @@
 
     </aside>
 
-    <div
-        class="modal"
-        id="modal"
-    >
+    <div class="modal" id="modal">
 
         <div class="modal-card">
 
-            <button
-                class="icon-button modal-close"
-                id="modalClose"
-            >
+            <button class="icon-button modal-close" id="modalClose">
                 ×
             </button>
 
@@ -355,16 +267,29 @@
 
     </div>
 
-    <input
-        type="file"
-        id="importInput"
-        accept=".xls,.html,text/html,application/vnd.ms-excel"
-        hidden
-    />
+    <input type="file" id="importInput" accept=".xls,.html,text/html,application/vnd.ms-excel" hidden />
+    <input type="file" id="importInput" accept=".xls,.html,text/html,application/vnd.ms-excel" hidden />
 
     <script src="i18n.js"></script>
     <script src="db.js"></script>
-    <script src="app.js"></script>
+
+    <script src="js/state.js"></script>
+    <script src="js/core.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script src="js/patients.js"></script>
+    <script src="js/odontogram.js"></script>
+    <script src="js/treatments.js"></script>
+    <script src="js/treatment-plans.js"></script>
+    <script src="js/appointments.js"></script>
+    <script src="js/prescriptions.js"></script>
+    <script src="js/xrays.js"></script>
+    <script src="js/timeline.js"></script>
+    <script src="js/backup.js"></script>
+
+    <script src="js/events.js"></script>
+    <script src="js/app.js"></script>
 
 </body>
 
