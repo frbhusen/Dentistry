@@ -3,15 +3,15 @@ const DB_NAME = "mizan-dental-db";
 const DB_VERSION = 2;
 
 const STORES = [
-    "patients",
-    "odontograms",
-    "appointments",
-    "treatments",
-    "treatmentPlans",
-    "invoices",
-    "prescriptions",
-    "xrays",
-    "settings",
+  "patients",
+  "odontograms",
+  "appointments",
+  "treatments",
+  "treatmentPlans",
+  "invoices",
+  "prescriptions",
+  "xrays",
+  "settings",
 ];
 
 let database;
@@ -84,6 +84,7 @@ async function dbDeletePatient(patientId) {
     "odontograms",
     "appointments",
     "treatments",
+    "treatmentPlans",
     "invoices",
     "prescriptions",
     "xrays",
@@ -123,131 +124,136 @@ async function dbExport() {
 }
 
 function validateBackup(data) {
-    if (!data || typeof data !== "object" || Array.isArray(data)) {
-        return false;
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return false;
+  }
+
+  // A backup must contain at least one recognized store.
+  const availableStores = STORES.filter(
+    (store) => Array.isArray(data[store])
+  );
+
+  if (!availableStores.length) {
+    return false;
+  }
+
+  // Every present store must contain an array.
+  for (const key of Object.keys(data)) {
+    if (!STORES.includes(key)) {
+      continue;
     }
 
-    // A backup must contain at least one recognized store.
-    const availableStores = STORES.filter(
-        (store) => Array.isArray(data[store])
-    );
-
-    if (!availableStores.length) {
-        return false;
+    if (!Array.isArray(data[key])) {
+      return false;
     }
+  }
 
-    // Every present store must contain an array.
-    for (const key of Object.keys(data)) {
-        if (!STORES.includes(key)) {
-            continue;
-        }
-
-        if (!Array.isArray(data[key])) {
-            return false;
-        }
-    }
-
-    return true;
+  return true;
 }
 
 
 function validateImportedData(data) {
-    if (!validateBackup(data)) {
-        throw new Error("Invalid backup structure.");
+  if (!validateBackup(data)) {
+    throw new Error("Invalid backup structure.");
+  }
+
+  // Check IDs.
+  for (const store of STORES) {
+    const rows = Array.isArray(data[store])
+      ? data[store]
+      : [];
+
+    for (const item of rows) {
+      if (!item || typeof item !== "object" || Array.isArray(item)) {
+        throw new Error(
+          `Invalid record found in ${store}.`
+        );
+      }
+
+      if (
+        item.id !== undefined &&
+        item.id !== null &&
+        item.id !== "" &&
+        !Number.isFinite(Number(item.id))
+      ) {
+        throw new Error(
+          `Invalid ID found in ${store}.`
+        );
+      }
+    }
+  }
+
+  // Patient IDs must be unique.
+  const patientIds = new Set();
+
+  for (const patient of data.patients || []) {
+    if (patient.id === undefined || patient.id === null) {
+      continue;
     }
 
-    // Check IDs.
-    for (const store of STORES) {
-        const rows = Array.isArray(data[store])
-            ? data[store]
-            : [];
+    const id = Number(patient.id);
 
-        for (const item of rows) {
-            if (!item || typeof item !== "object" || Array.isArray(item)) {
-                throw new Error(
-                    `Invalid record found in ${store}.`
-                );
-            }
-
-            if (
-                item.id !== undefined &&
-                item.id !== null &&
-                item.id !== "" &&
-                !Number.isFinite(Number(item.id))
-            ) {
-                throw new Error(
-                    `Invalid ID found in ${store}.`
-                );
-            }
-        }
+    if (patientIds.has(id)) {
+      throw new Error(
+        `Duplicate patient ID found: ${id}`
+      );
     }
 
-    // Patient IDs must be unique.
-    const patientIds = new Set();
+    patientIds.add(id);
+  }
 
-    for (const patient of data.patients || []) {
-        if (patient.id === undefined || patient.id === null) {
-            continue;
-        }
-
-        const id = Number(patient.id);
-
-        if (patientIds.has(id)) {
-            throw new Error(
-                `Duplicate patient ID found: ${id}`
-            );
-        }
-
-        patientIds.add(id);
-    }
-
-    return true;
+  return true;
 }
 
 
 function normalizeImportedData(data) {
-    const normalized = {};
+  const normalized = {};
 
-    for (const store of STORES) {
-        normalized[store] = Array.isArray(data[store])
-            ? data[store].map((item) => ({ ...item }))
-            : [];
-    }
+  for (const store of STORES) {
+    normalized[store] = Array.isArray(data[store])
+      ? data[store].map((item) => ({ ...item }))
+      : [];
+  }
 
-    return normalized;
+  return normalized;
 }
 
 
 async function dbImport(data) {
-    validateImportedData(data);
+  validateImportedData(data);
 
-    const normalized = normalizeImportedData(data);
+  const normalized = normalizeImportedData(data);
 
-    // Clear existing data first.
-    for (const store of STORES) {
-        await dbClear(store);
+  // Clear existing data first.
+  for (const store of STORES) {
+    await dbClear(store);
+  }
+
+  // Restore every known store.
+  for (const store of STORES) {
+    for (const item of normalized[store]) {
+      await dbPut(store, item);
     }
-
-    // Restore every known store.
-    for (const store of STORES) {
-        for (const item of normalized[store]) {
-            await dbPut(store, item);
-        }
-    }
+  }
 }
 
 
 function verifyImportedData(original, imported) {
     for (const store of STORES) {
-        const originalRows = Array.isArray(original[store])
-            ? original[store]
-            : [];
+        const originalRows =
+            Array.isArray(original[store])
+                ? original[store]
+                : [];
 
-        const importedRows = Array.isArray(imported[store])
-            ? imported[store]
-            : [];
+        const importedRows =
+            Array.isArray(imported[store])
+                ? imported[store]
+                : [];
 
-        if (originalRows.length !== importedRows.length) {
+        if (
+            originalRows.length !==
+            importedRows.length
+        ) {
             console.error(
                 `Import verification failed for ${store}:`,
                 originalRows.length,
@@ -256,6 +262,33 @@ function verifyImportedData(original, imported) {
 
             return false;
         }
+
+        for (
+            let index = 0;
+            index < originalRows.length;
+            index++
+        ) {
+            const originalRow =
+                originalRows[index];
+
+            const importedRow =
+                importedRows[index];
+
+            if (
+                JSON.stringify(
+                    originalRow
+                ) !==
+                JSON.stringify(
+                    importedRow
+                )
+            ) {
+                console.error(
+                    `Import verification failed for ${store} record ${index}`
+                );
+
+                return false;
+            }
+        }
     }
 
     return true;
@@ -263,36 +296,36 @@ function verifyImportedData(original, imported) {
 
 
 async function safeImport(data) {
-    const previousData = await dbExport();
+  const previousData = await dbExport();
+
+  try {
+    validateImportedData(data);
+
+    await dbImport(data);
+
+    const importedData = await dbExport();
+
+    if (!verifyImportedData(data, importedData)) {
+      throw new Error(
+        "Imported data could not be verified."
+      );
+    }
+
+    return true;
+  } catch (error) {
+    console.error("Import failed:", error);
 
     try {
-        validateImportedData(data);
-
-        await dbImport(data);
-
-        const importedData = await dbExport();
-
-        if (!verifyImportedData(data, importedData)) {
-            throw new Error(
-                "Imported data could not be verified."
-            );
-        }
-
-        return true;
-    } catch (error) {
-        console.error("Import failed:", error);
-
-        try {
-            await dbImport(previousData);
-        } catch (restoreError) {
-            console.error(
-                "Failed to restore previous database:",
-                restoreError
-            );
-        }
-
-        throw error;
+      await dbImport(previousData);
+    } catch (restoreError) {
+      console.error(
+        "Failed to restore previous database:",
+        restoreError
+      );
     }
+
+    throw error;
+  }
 }
 
 async function seedDatabase() {
