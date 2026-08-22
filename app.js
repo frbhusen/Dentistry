@@ -621,15 +621,7 @@ function patientForm(patient) {
     </div>
 </div>
 
-${renderPatientTimeline(patient.id)}<div class="timeline">${
-    state.treatments
-      .filter((item) => item.patientId === patient.id)
-      .map(
-        (item) =>
-          `<div class="timeline-item"><span class="timeline-dot"></span><div><b>${esc(item.description)}</b><small>${esc(item.date)} · ${money(item.fee)} · ${esc(item.status)}</small></div></div>`,
-      )
-      .join("") || `<p class="muted">${t("noVisits")}</p>`
-  }</div>`;
+${renderPatientTimeline(patient.id)}`
 }
 function addTreatmentPlan() {
 
