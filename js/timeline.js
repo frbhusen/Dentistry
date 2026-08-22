@@ -101,20 +101,70 @@ function renderPatientTimeline(patientId) {
     }
 
     return `
-        <div class="patient-timeline">
+    <div class="patient-timeline">
 
-            ${events
+        ${events
             .map(
                 (event) => `
-                        <div
-    class="timeline-event ${event.type === "xray" ? "timeline-event-clickable" : ""
-                    }"
-    ${event.type === "xray" ? `data-open-xray="${event.id}"` : ""}
->
-                    `,
+                    <div
+                        class="timeline-event ${
+                            event.type === "xray"
+                                ? "timeline-event-clickable"
+                                : ""
+                        }"
+                        ${
+                            event.type === "xray"
+                                ? `data-open-xray="${event.id}"`
+                                : ""
+                        }
+                    >
+
+                        <div class="timeline-marker">
+                            ${event.icon}
+                        </div>
+
+                        <div class="timeline-content">
+
+                            <div class="timeline-event-header">
+
+                                <div>
+                                    <strong>
+                                        ${esc(event.title)}
+                                    </strong>
+
+                                    <small>
+                                        ${esc(event.date)}
+                                        ${
+                                            event.time
+                                                ? ` · ${esc(event.time)}`
+                                                : ""
+                                        }
+                                    </small>
+                                </div>
+
+                                ${
+                                    event.status
+                                        ? `
+                                            <span class="badge">
+                                                ${t(event.status)}
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                            <p>
+                                ${esc(event.description)}
+                            </p>
+
+                        </div>
+
+                    </div>
+                `,
             )
             .join("")}
 
-        </div>
-    `;
+    </div>
+`;
 }

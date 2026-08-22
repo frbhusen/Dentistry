@@ -1,3 +1,7 @@
+
+let undoAction = null;
+let undoTimer = null;
+
 function setText() {
     document.documentElement.lang =
         currentLanguage;

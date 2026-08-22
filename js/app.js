@@ -131,8 +131,6 @@ function newPatient() {
   };
 }
 
-let undoAction = null;
-let undoTimer = null;
 
 $("#langBtn").onclick = async () => {
   currentLanguage = currentLanguage === "en" ? "ar" : "en";
