@@ -132,82 +132,12 @@ function newPatient() {
 }
 
 
-$("#langBtn").onclick = async () => {
-  currentLanguage = currentLanguage === "en" ? "ar" : "en";
 
-  await dbPut("settings", {
-    ...state.settings,
-    id: 1,
-    currentLanguage,
-  });
 
-  render();
 
-  if (document.body.classList.contains("drawer-open")) {
-    openTooth(state.selectedTooth);
-  }
-};
-$("#newPatientBtn").onclick = () => newPatient();
-$("#unlockBtn").onclick = verifyPIN;
 
-$("#savePINBtn").onclick = savePIN;
 
-$("#pinInput").addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    verifyPIN();
-  }
-});
 
-$("#confirmPINInput").addEventListener("keydown", (event) => {
-  if (event.key === "Enter") {
-    savePIN();
-  }
-});
-$("#backupBtn").onclick = () => exportData();
-$("#closeDrawer").onclick = () => document.body.classList.remove("drawer-open");
-$("#drawerBackdrop").onclick = () =>
-  document.body.classList.remove("drawer-open");
-$("#modalClose").onclick = () => $("#modal").classList.remove("show");
-$("#globalSearch").oninput = (event) => {
-  const term = event.target.value.toLowerCase();
-  const patient = state.patients.find(
-    (item) =>
-      item.name.toLowerCase().includes(term) ||
-      item.phone?.toLowerCase().includes(term),
-  );
-  if (patient) {
-    state.selectedPatient = patient;
-    state.view = "patients";
-    render();
-  }
-};
-$("#importInput").onchange = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = async () => {
-    try {
-      const data = parseExcelBackup(reader.result);
-      if (!validateBackup(data)) throw Error();
-      if (confirm(t("confirmWipe"))) {
-        await safeImport(data);
-        toast(t("restored"));
-        await refresh();
-      }
-    } catch {
-      alert("Invalid Excel backup file");
-    }
-  };
-  reader.readAsText(file);
-};
-
-if (localStorage.getItem("mizan-sidebar-collapsed") === "true")
-  document.body.classList.add("sidebar-collapsed");
-$("#sidebarToggle").onclick = () => {
-  const collapsed = document.body.classList.toggle("sidebar-collapsed");
-  localStorage.setItem("mizan-sidebar-collapsed", String(collapsed));
-  setText();
-};
 function updateClock() {
   const now = new Date();
 
@@ -231,50 +161,7 @@ function updateClock() {
     },
   );
 }
-document.addEventListener("keydown", (event) => {
-  if (event.target.matches("input, textarea, select")) {
-    return;
-  }
 
-  if (event.key === "Escape") {
-    $("#modal").classList.remove("show");
-    document.body.classList.remove("drawer-open");
-  }
-
-  if (event.key.toLowerCase() === "n") {
-    newPatient();
-  }
-
-  if (event.key.toLowerCase() === "a") {
-    addAppointment();
-  }
-
-  if (event.key.toLowerCase() === "p") {
-    state.view = "patients";
-    render();
-  }
-
-  if (event.key.toLowerCase() === "o") {
-    state.view = "odontogram";
-    render();
-  }
-
-  if (event.ctrlKey && event.key.toLowerCase() === "k") {
-    event.preventDefault();
-    $("#globalSearch").focus();
-  }
-});
-["mousemove", "mousedown", "keydown", "touchstart"].forEach((eventName) => {
-  document.addEventListener(
-    eventName,
-    () => {
-      if (!document.body.classList.contains("app-locked")) {
-        resetInactivityTimer();
-      }
-    },
-    true,
-  );
-});
 
 setInterval(updateClock, 1000);
 updateClock();

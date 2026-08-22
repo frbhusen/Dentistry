@@ -29,47 +29,165 @@ async function exportData() {
     }, 1000);
     toast(t("exported"));
 }
+
 function parseExcelBackup(source) {
-    const document = new DOMParser().parseFromString(source, "text/html");
-    if (!document.querySelector('meta[name="mizan-export"]'))
-        throw Error("Unsupported workbook");
+    if (!source || typeof source !== "string") {
+        throw new Error("Backup file is empty.");
+    }
+
+    const parser = new DOMParser();
+
+    const document = parser.parseFromString(
+        source,
+        "text/html"
+    );
+
+    const marker = document.querySelector(
+        'meta[name="mizan-export"]'
+    );
+
+    if (!marker) {
+        throw new Error(
+            "This file is not a valid Mizan Dental backup."
+        );
+    }
+
     const data = {};
-    document.querySelectorAll("h2").forEach((heading) => {
+
+    const headings = [
+        ...document.querySelectorAll("h2")
+    ];
+
+    for (const heading of headings) {
         const store = heading.textContent.trim();
-        if (!STORES.includes(store)) return;
+
+        if (!STORES.includes(store)) {
+            continue;
+        }
+
         const table = heading.nextElementSibling;
-        const headers = [...(table?.querySelectorAll("thead th") || [])].map(
-            (cell) => cell.textContent.trim(),
+
+        if (!table || table.tagName !== "TABLE") {
+            data[store] = [];
+            continue;
+        }
+
+        const headers = [
+            ...table.querySelectorAll(
+                "thead th"
+            )
+        ].map(
+            (cell) =>
+                cell.textContent.trim()
         );
-        data[store] = [...(table?.querySelectorAll("tbody tr") || [])].map(
-            (row) => {
-                const item = {};
-                [...row.querySelectorAll("td")].forEach((cell, index) => {
-                    const key = headers[index];
-                    if (!key) return;
-                    let value = cell.textContent;
+
+        const rows = [
+            ...table.querySelectorAll(
+                "tbody tr"
+            )
+        ];
+
+        data[store] = rows.map((row) => {
+            const cells = [
+                ...row.querySelectorAll("td")
+            ];
+
+            const item = {};
+
+            cells.forEach((cell, index) => {
+                const key = headers[index];
+
+                if (!key) {
+                    return;
+                }
+
+                let value =
+                    cell.textContent.trim();
+
+                /*
+                 * Empty cells remain empty strings.
+                 */
+                if (value === "") {
+                    item[key] = "";
+                    return;
+                }
+
+                /*
+                 * Numeric fields.
+                 */
+                const numericFields = [
+                    "id",
+                    "patientId",
+                    "toothNumber",
+                    "fee",
+                    "duration",
+                    "paidAmount",
+                    "balance",
+                    "discount",
+                    "slotDuration"
+                ];
+
+                if (
+                    numericFields.includes(key)
+                ) {
+                    const number =
+                        Number(value);
+
                     if (
-                        [
-                            "id",
-                            "patientId",
-                            "toothNumber",
-                            "fee",
-                            "duration",
-                            "paidAmount",
-                            "balance",
-                            "discount",
-                            "slotDuration",
-                        ].includes(key) &&
-                        value !== ""
-                    )
-                        value = Number(value);
-                    if (["items", "medications"].includes(key) && value)
-                        value = JSON.parse(value);
-                    item[key] = value;
-                });
-                return item;
-            },
-        );
-    });
+                        Number.isFinite(number)
+                    ) {
+                        item[key] = number;
+                    } else {
+                        throw new Error(
+                            `Invalid number in ${store}.${key}`
+                        );
+                    }
+
+                    return;
+                }
+
+                /*
+                 * JSON fields.
+                 */
+                const jsonFields = [
+                    "items",
+                    "medications"
+                ];
+
+                if (
+                    jsonFields.includes(key)
+                ) {
+                    try {
+                        item[key] =
+                            JSON.parse(value);
+                    } catch (error) {
+                        throw new Error(
+                            `Invalid JSON in ${store}.${key}`
+                        );
+                    }
+
+                    return;
+                }
+
+                item[key] = value;
+            });
+
+            return item;
+        });
+    }
+
+    /*
+     * Stores that are not present in the
+     * backup are treated as empty.
+     *
+     * This makes older backups compatible
+     * with newer versions of the app.
+     */
+    for (const store of STORES) {
+        if (!Array.isArray(data[store])) {
+            data[store] = [];
+        }
+    }
+
     return data;
 }
