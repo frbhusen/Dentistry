@@ -44,7 +44,7 @@ const esc = (value) =>
     /[&<>"']/g,
     (char) =>
       ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        char
+      char
       ],
   );
 const today = () => new Date().toISOString().slice(0, 10);
@@ -75,10 +75,10 @@ function renderNav() {
   ).join("");
   $$(".nav-item").forEach(
     (button) =>
-      (button.onclick = () => {
-        state.view = button.dataset.view;
-        render();
-      }),
+    (button.onclick = () => {
+      state.view = button.dataset.view;
+      render();
+    }),
   );
 }
 async function refresh(preserveEmptySelection = false) {
@@ -128,10 +128,10 @@ async function refresh(preserveEmptySelection = false) {
     ? null
     : state.selectedPatient
       ? state.patients.find(
-          (patient) => patient.id === state.selectedPatient.id,
-        ) ||
-        state.patients[0] ||
-        null
+        (patient) => patient.id === state.selectedPatient.id,
+      ) ||
+      state.patients[0] ||
+      null
       : state.patients[0] || null;
   for (const treatment of state.treatments) {
     if (treatment.status === "Planned") {
@@ -414,192 +414,120 @@ function renderPatients() {
 }
 
 function renderPatientTimeline(patientId) {
-    const events = [];
+  const events = [];
 
-    // Appointments
-    state.appointments
-        .filter((item) => item.patientId === patientId)
-        .forEach((item) => {
-            events.push({
-                type: "appointment",
-                date: item.date || "",
-                time: item.startTime || "",
-                title: item.procedure || t("appointment"),
-                description:
-                    `${item.startTime || ""} · ${t(
-                        item.status || "booked"
-                    )}`,
-                icon: "📅",
-                status: item.status || "booked",
-            });
-        });
-
-    // Treatments
-    state.treatments
-        .filter((item) => item.patientId === patientId)
-        .forEach((item) => {
-            events.push({
-                type: "treatment",
-                date: item.date || "",
-                time: "",
-                title:
-                    item.description ||
-                    t("treatment"),
-                description:
-                    `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${money(item.fee)}`,
-                icon: "🦷",
-                status: item.status || "planned",
-            });
-        });
-
-    // Treatment plans
-    state.treatmentPlans
-        .filter((item) => item.patientId === patientId)
-        .forEach((item) => {
-            events.push({
-                type: "treatment-plan",
-                date:
-                    item.updatedAt ||
-                    item.createdAt ||
-                    "",
-                time: "",
-                title:
-                    item.procedure ||
-                    t("treatmentPlan"),
-                description:
-                    `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${t(
-                        "diagnosis"
-                    )}: ${item.diagnosis || "—"}`,
-                icon: "📋",
-                status: item.status || "planned",
-            });
-        });
-
-    // Prescriptions
-    state.prescriptions
-        .filter((item) => item.patientId === patientId)
-        .forEach((item) => {
-            events.push({
-                type: "prescription",
-                date: item.date || "",
-                time: "",
-                title: t("prescriptions"),
-                description:
-                    item.medications
-                        ?.map((medication) =>
-                            medication.name
-                        )
-                        .join(", ") ||
-                    t("medication"),
-                icon: "💊",
-                status: "",
-            });
-        });
-
-    // X-rays
-    state.xrays
-        .filter((item) => item.patientId === patientId)
-        .forEach((item) => {
-            events.push({
-                type: "xray",
-                date: item.date || "",
-                time: "",
-                title:
-                    item.filename ||
-                    t("xrays"),
-                description:
-                    `${t(
-                        item.type || "other"
-                    )}${
-                        item.toothTag
-                            ? ` · ${t(
-                                  "toothNumber"
-                              )} #${item.toothTag}`
-                            : ""
-                    }`,
-                icon: "📷",
-                status: "",
-            });
-        });
-
-    // Newest first
-    events.sort((a, b) => {
-        const first =
-            `${b.date} ${b.time}`.trim();
-
-        const second =
-            `${a.date} ${a.time}`.trim();
-
-        return first.localeCompare(second);
+  // Appointments
+  state.appointments
+    .filter((item) => item.patientId === patientId)
+    .forEach((item) => {
+      events.push({
+        type: "appointment",
+        date: item.date || "",
+        time: item.startTime || "",
+        title: item.procedure || t("appointment"),
+        description: `${item.startTime || ""} · ${t(item.status || "booked")}`,
+        icon: "📅",
+        status: item.status || "booked",
+      });
     });
 
-    if (!events.length) {
-        return `
+  // Treatments
+  state.treatments
+    .filter((item) => item.patientId === patientId)
+    .forEach((item) => {
+      events.push({
+        type: "treatment",
+        date: item.date || "",
+        time: "",
+        title: item.description || t("treatment"),
+        description: `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${money(item.fee)}`,
+        icon: "🦷",
+        status: item.status || "planned",
+      });
+    });
+
+  // Treatment plans
+  state.treatmentPlans
+    .filter((item) => item.patientId === patientId)
+    .forEach((item) => {
+      events.push({
+        type: "treatment-plan",
+        date: item.updatedAt || item.createdAt || "",
+        time: "",
+        title: item.procedure || t("treatmentPlan"),
+        description: `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${t(
+          "diagnosis",
+        )}: ${item.diagnosis || "—"}`,
+        icon: "📋",
+        status: item.status || "planned",
+      });
+    });
+
+  // Prescriptions
+  state.prescriptions
+    .filter((item) => item.patientId === patientId)
+    .forEach((item) => {
+      events.push({
+        type: "prescription",
+        date: item.date || "",
+        time: "",
+        title: t("prescriptions"),
+        description:
+          item.medications?.map((medication) => medication.name).join(", ") ||
+          t("medication"),
+        icon: "💊",
+        status: "",
+      });
+    });
+
+  // X-rays
+  state.xrays
+    .filter((item) => item.patientId === patientId)
+    .forEach((item) => {
+      events.push({
+        type: "xray",
+        id: item.id,
+        date: item.date || "",
+        time: "",
+        title: item.filename || t("xrays"),
+        description: `${t(item.type || "other")}${item.toothTag ? ` · ${t("toothNumber")} #${item.toothTag}` : ""
+          }`,
+        icon: "📷",
+        status: "",
+      });
+    });
+
+  // Newest first
+  events.sort((a, b) => {
+    const first = `${b.date} ${b.time}`.trim();
+
+    const second = `${a.date} ${a.time}`.trim();
+
+    return first.localeCompare(second);
+  });
+
+  if (!events.length) {
+    return `
             <div class="timeline-empty">
                 ${t("noVisits")}
             </div>
         `;
-    }
+  }
 
-    return `
+  return `
         <div class="patient-timeline">
 
             ${events
-                .map(
-                    (event) => `
-                        <div class="timeline-event">
-
-                            <div class="timeline-marker">
-                                ${event.icon}
-                            </div>
-
-                            <div class="timeline-content">
-
-                                <div class="timeline-event-header">
-
-                                    <div>
-                                        <strong>
-                                            ${esc(event.title)}
-                                        </strong>
-
-                                        <small>
-                                            ${esc(event.date)}
-                                            ${
-                                                event.time
-                                                    ? ` · ${esc(
-                                                          event.time
-                                                      )}`
-                                                    : ""
-                                            }
-                                        </small>
-                                    </div>
-
-                                    ${
-                                        event.status
-                                            ? `
-                                                <span class="badge">
-                                                    ${t(
-                                                        event.status
-                                                    )}
-                                                </span>
-                                            `
-                                            : ""
-                                    }
-
-                                </div>
-
-                                <p>
-                                    ${esc(
-                                        event.description
-                                    )}
-                                </p>
-
-                            </div>
-
-                        </div>
-                    `
-                )
-                .join("")}
+      .map(
+        (event) => `
+                        <div
+    class="timeline-event ${event.type === "xray" ? "timeline-event-clickable" : ""
+          }"
+    ${event.type === "xray" ? `data-open-xray="${event.id}"` : ""}
+>
+                    `,
+      )
+      .join("")}
 
         </div>
     `;
@@ -621,37 +549,29 @@ function patientForm(patient) {
     </div>
 </div>
 
-${renderPatientTimeline(patient.id)}`
+${renderPatientTimeline(patient.id)}`;
 }
 function addTreatmentPlan() {
-
-    const patientOptions =
-        state.patients
-            .map(
-                (patient) =>
-                    `<option
+  const patientOptions = state.patients
+    .map(
+      (patient) =>
+        `<option
                         value="${patient.id}"
-                        ${
-                            patient.id ===
-                            state.selectedPatient?.id
-                                ? "selected"
-                                : ""
-                        }
+                        ${patient.id === state.selectedPatient?.id
+          ? "selected"
+          : ""
+        }
                     >
-                        ${esc(
-                            patient.name
-                        )}
+                        ${esc(patient.name)}
                         ·
-                        ${esc(
-                            patient.phone || ""
-                        )}
-                    </option>`
-            )
-            .join("");
+                        ${esc(patient.phone || "")}
+                    </option>`,
+    )
+    .join("");
 
-    modal(
-        t("addTreatmentPlan"),
-        `
+  modal(
+    t("addTreatmentPlan"),
+    `
         <form
             id="treatmentPlanForm"
             class="form-grid"
@@ -823,100 +743,58 @@ function addTreatmentPlan() {
             </div>
 
         </form>
-        `
+        `,
+  );
+
+  $("#treatmentPlanForm").onsubmit = async (event) => {
+    event.preventDefault();
+
+    const data = Object.fromEntries(new FormData(event.target));
+
+    const patient = state.patients.find(
+      (item) => item.id === Number(data.patientId),
     );
 
-    $("#treatmentPlanForm").onsubmit =
-        async (event) => {
+    if (!patient) {
+      toast(t("selectPatient"));
 
-            event.preventDefault();
+      return;
+    }
 
-            const data =
-                Object.fromEntries(
-                    new FormData(
-                        event.target
-                    )
-                );
+    try {
+      await dbPut("treatmentPlans", {
+        patientId: patient.id,
 
-            const patient =
-                state.patients.find(
-                    (item) =>
-                        item.id ===
-                        Number(
-                            data.patientId
-                        )
-                );
+        toothNumber: Number(data.toothNumber) || null,
 
-            if (!patient) {
-                toast(
-                    t("selectPatient")
-                );
+        diagnosis: data.diagnosis,
 
-                return;
-            }
+        procedure: data.procedure,
 
-            try {
+        fee: Number(data.fee) || 0,
 
-                await dbPut(
-                    "treatmentPlans",
-                    {
-                        patientId:
-                            patient.id,
+        priority: data.priority,
 
-                        toothNumber:
-                            Number(
-                                data.toothNumber
-                            ) || null,
+        status: data.status,
 
-                        diagnosis:
-                            data.diagnosis,
+        notes: data.notes || "",
 
-                        procedure:
-                            data.procedure,
+        createdAt: new Date().toISOString(),
 
-                        fee:
-                            Number(
-                                data.fee
-                            ) || 0,
+        updatedAt: new Date().toISOString(),
+      });
 
-                        priority:
-                            data.priority,
+      state.selectedPatient = patient;
 
-                        status:
-                            data.status,
+      $("#modal").classList.remove("show");
 
-                        notes:
-                            data.notes || "",
+      await refresh();
+    } catch (error) {
+      console.error("Failed to create treatment plan:", error);
 
-                        createdAt:
-                            new Date().toISOString(),
-
-                        updatedAt:
-                            new Date().toISOString(),
-                    }
-                );
-
-                state.selectedPatient =
-                    patient;
-
-                $("#modal").classList.remove(
-                    "show"
-                );
-
-                await refresh();
-
-            } catch (error) {
-
-                console.error(
-                    "Failed to create treatment plan:",
-                    error
-                );
-
-                toast(
-                    "Unable to save treatment plan."
-                );
-            }
-        };
+      toast("Unable to save treatment plan.");
+    }
+  };
 }
 function editTreatmentPlan(id) {
   const plan = state.treatmentPlans.find((item) => item.id === id);
@@ -1010,11 +888,10 @@ function editTreatmentPlan(id) {
 
                     <option
                         value="medium"
-                        ${
-                          plan.priority === "medium" || !plan.priority
-                            ? "selected"
-                            : ""
-                        }
+                        ${plan.priority === "medium" || !plan.priority
+      ? "selected"
+      : ""
+    }
                     >
                         ${t("medium")}
                     </option>
@@ -1149,26 +1026,24 @@ function editTreatmentPlan(id) {
   };
 }
 function renderTreatmentPlanList(patientId) {
-    const plans =
-        state.treatmentPlans.filter(
-            (item) =>
-                item.patientId === patientId
-        );
+  const plans = state.treatmentPlans.filter(
+    (item) => item.patientId === patientId,
+  );
 
-    if (!plans.length) {
-        return `
+  if (!plans.length) {
+    return `
             <p class="muted">
                 ${t("noTreatmentPlans")}
             </p>
         `;
-    }
+  }
 
-    return `
+  return `
         <div class="treatment-plan-list">
 
             ${plans
-                .map(
-                    (item) => `
+      .map(
+        (item) => `
                         <div
                             class="treatment-plan-item"
                         >
@@ -1180,29 +1055,21 @@ function renderTreatmentPlanList(patientId) {
                                 <div
                                     class="treatment-plan-tooth"
                                 >
-                                    ${
-                                        item.toothNumber
-                                            ? `#${esc(
-                                                  item.toothNumber
-                                              )}`
-                                            : "—"
-                                    }
+                                    ${item.toothNumber
+            ? `#${esc(item.toothNumber)}`
+            : "—"
+          }
                                 </div>
 
                                 <div>
 
                                     <strong>
-                                        ${esc(
-                                            item.procedure
-                                        )}
+                                        ${esc(item.procedure)}
                                     </strong>
 
                                     <small>
                                         ${t("diagnosis")}:
-                                        ${esc(
-                                            item.diagnosis ||
-                                                "—"
-                                        )}
+                                        ${esc(item.diagnosis || "—")}
                                     </small>
 
                                 </div>
@@ -1216,25 +1083,17 @@ function renderTreatmentPlanList(patientId) {
                                 <span
                                     class="badge"
                                 >
-                                    ${t(
-                                        item.priority ||
-                                            "medium"
-                                    )}
+                                    ${t(item.priority || "medium")}
                                 </span>
 
                                 <span
                                     class="badge"
                                 >
-                                    ${t(
-                                        item.status ||
-                                            "planned"
-                                    )}
+                                    ${t(item.status || "planned")}
                                 </span>
 
                                 <strong>
-                                    ${money(
-                                        item.fee
-                                    )}
+                                    ${money(item.fee)}
                                 </strong>
 
                                 <div
@@ -1262,37 +1121,31 @@ function renderTreatmentPlanList(patientId) {
                             </div>
 
                         </div>
-                    `
-                )
-                .join("")}
+                    `,
+      )
+      .join("")}
 
         </div>
     `;
 }
 function renderTreatmentPlans() {
-    const patient =
-        state.selectedPatient;
+  const patient = state.selectedPatient;
 
-    const patientOptions =
-        state.patients
-            .map(
-                (item) =>
-                    `<option
+  const patientOptions = state.patients
+    .map(
+      (item) =>
+        `<option
                         value="${item.id}"
-                        ${
-                            item.id === patient?.id
-                                ? "selected"
-                                : ""
-                        }
+                        ${item.id === patient?.id ? "selected" : ""}
                     >
                         ${esc(item.name)}
                         ·
                         ${esc(item.phone || "")}
-                    </option>`
-            )
-            .join("");
+                    </option>`,
+    )
+    .join("");
 
-    return `
+  return `
         <section class="card">
 
             <div class="card-heading">
@@ -1302,31 +1155,24 @@ function renderTreatmentPlans() {
                         ${t("treatmentPlan")}
                     </h2>
 
-                    ${
-                        patient
-                            ? `
+                    ${patient
+      ? `
                                 <p class="muted">
-                                    ${esc(
-                                        patient.name
-                                    )}
+                                    ${esc(patient.name)}
                                 </p>
                             `
-                            : `
+      : `
                                 <p class="muted">
                                     ${t("selectPatient")}
                                 </p>
                             `
-                    }
+    }
                 </div>
 
                 <button
                     class="button button-primary"
                     data-action="addTreatmentPlan"
-                    ${
-                        !patient
-                            ? "disabled"
-                            : ""
-                    }
+                    ${!patient ? "disabled" : ""}
                 >
                     ＋
                     ${t("addTreatmentPlan")}
@@ -1352,17 +1198,14 @@ function renderTreatmentPlans() {
 
             </div>
 
-            ${
-                patient
-                    ? renderTreatmentPlanList(
-                          patient.id
-                      )
-                    : `
+            ${patient
+      ? renderTreatmentPlanList(patient.id)
+      : `
                         <div class="timeline-empty">
                             ${t("selectPatient")}
                         </div>
                     `
-            }
+    }
 
         </section>
     `;
@@ -1537,9 +1380,8 @@ function renderXrays() {
 
             ${patientSelector("xrayPatientSelect", state.selectedPatient)}
 
-            ${
-              state.selectedPatient
-                ? `
+            ${state.selectedPatient
+      ? `
                         <div class="xray-upload-form">
 
                             <div class="field">
@@ -1623,21 +1465,23 @@ function renderXrays() {
 
                         </div>
                     `
-                : `
+      : `
                         <p class="muted">
                             ${t("selectPatient")}
                         </p>
                     `
-            }
+    }
 
             <div class="xray-grid">
 
-                ${
-                  images.length
-                    ? images
-                        .map(
-                          (item) => `
-                                    <div class="xray-item">
+                ${images.length
+      ? images
+        .map(
+          (item) => `
+                                    <div
+    class="xray-item xray-item-clickable"
+    data-open-xray="${item.id}"
+>
 
                                         <img
                                             src="${item.base64Data}"
@@ -1656,20 +1500,19 @@ function renderXrays() {
 
                                                     <span>
                                                         ${t(
-                                                          item.type || "other",
-                                                        )}
+            item.type || "other",
+          )}
                                                     </span>
 
-                                                    ${
-                                                      item.toothTag
-                                                        ? `
+                                                    ${item.toothTag
+              ? `
                                                                 <span>
                                                                     ${t("toothNumber")}
                                                                     #${esc(item.toothTag)}
                                                                 </span>
                                                             `
-                                                        : ""
-                                                    }
+              : ""
+            }
 
                                                     <span>
                                                         ${esc(item.date)}
@@ -1677,17 +1520,16 @@ function renderXrays() {
 
                                                 </div>
 
-                                                ${
-                                                  item.notes
-                                                    ? `
+                                                ${item.notes
+              ? `
                                                             <p class="xray-notes">
                                                                 ${esc(
-                                                                  item.notes,
-                                                                )}
+                item.notes,
+              )}
                                                             </p>
                                                         `
-                                                    : ""
-                                                }
+              : ""
+            }
 
                                             </div>
 
@@ -1705,14 +1547,14 @@ function renderXrays() {
 
                                     </div>
                                 `,
-                        )
-                        .join("")
-                    : `
+        )
+        .join("")
+      : `
                             <p class="muted">
                                 ${t("noVisits")}
                             </p>
                         `
-                }
+    }
 
             </div>
 
@@ -1774,6 +1616,173 @@ async function updateTooth(condition) {
 function modal(title, body) {
   $("#modalContent").innerHTML = `<h2>${title}</h2>${body}`;
   $("#modal").classList.add("show");
+}
+function openXrayViewer(xrayId) {
+  const xray = state.xrays.find((item) => item.id === xrayId);
+
+  if (!xray) {
+    return;
+  }
+
+  modal(
+    xray.filename || t("xrays"),
+    `
+        <div class="xray-viewer">
+
+            <div class="xray-viewer-toolbar">
+
+                <div class="xray-viewer-info">
+
+                    <span class="badge">
+                        ${t(xray.type || "other")}
+                    </span>
+
+                    ${xray.toothTag
+      ? `
+                                <span class="badge">
+                                    ${t("toothNumber")}
+                                    #${esc(xray.toothTag)}
+                                </span>
+                            `
+      : ""
+    }
+
+                    <span class="muted">
+                        ${esc(xray.date || "")}
+                    </span>
+
+                </div>
+
+                <div class="xray-viewer-actions">
+
+                    <button
+                        type="button"
+                        class="button button-ghost"
+                        id="xrayZoomOut"
+                    >
+                        −
+                    </button>
+
+                    <span
+                        id="xrayZoomLabel"
+                        class="xray-zoom-label"
+                    >
+                        100%
+                    </span>
+
+                    <button
+                        type="button"
+                        class="button button-ghost"
+                        id="xrayZoomIn"
+                    >
+                        +
+                    </button>
+
+                    <button
+                        type="button"
+                        class="button button-ghost"
+                        id="xrayReset"
+                    >
+                        ${t("reset")}
+                    </button>
+
+                    <button
+                        type="button"
+                        class="button button-ghost"
+                        id="xrayRotate"
+                    >
+                        ↻
+                    </button>
+
+                    <a
+                        class="button button-primary"
+                        id="xrayDownload"
+                        download="${esc(xray.filename || "xray.webp")}"
+                    >
+                        ${t("download")}
+                    </a>
+
+                </div>
+
+            </div>
+
+            <div
+                class="xray-viewer-stage"
+                id="xrayViewerStage"
+            >
+
+                <img
+                    id="xrayViewerImage"
+                    src="${xray.base64Data}"
+                    alt="${esc(xray.filename || "X-ray")}"
+                >
+
+            </div>
+
+            ${xray.notes
+      ? `
+                        <div class="xray-viewer-notes">
+                            <strong>
+                                ${t("clinicalNotes")}
+                            </strong>
+
+                            <p>
+                                ${esc(xray.notes)}
+                            </p>
+                        </div>
+                    `
+      : ""
+    }
+
+        </div>
+        `,
+  );
+
+  const image = $("#xrayViewerImage");
+  const download = $("#xrayDownload");
+  const zoomLabel = $("#xrayZoomLabel");
+
+  if (!image || !download || !zoomLabel) {
+    return;
+  }
+
+  let zoom = 1;
+  let rotation = 0;
+
+  download.href = xray.base64Data;
+
+  function updateViewer() {
+    image.style.transform = `scale(${zoom}) rotate(${rotation}deg)`;
+
+    zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+  }
+
+  $("#xrayZoomIn").onclick = () => {
+    zoom = Math.min(4, zoom + 0.25);
+
+    updateViewer();
+  };
+
+  $("#xrayZoomOut").onclick = () => {
+    zoom = Math.max(0.5, zoom - 0.25);
+
+    updateViewer();
+  };
+
+  $("#xrayReset").onclick = () => {
+    zoom = 1;
+    rotation = 0;
+
+    updateViewer();
+  };
+
+  $("#xrayRotate").onclick = () => {
+    rotation = (rotation + 90) % 360;
+
+    updateViewer();
+  };
+
+  updateViewer();
 }
 
 async function getPatientBackup(patientId) {
@@ -1877,19 +1886,19 @@ function blobToBase64(blob) {
 function bindView() {
   $$("[data-patient-id]").forEach(
     (row) =>
-      (row.onclick = () => {
-        state.selectedPatient = state.patients.find(
-          (p) => p.id === Number(row.dataset.patientId),
-        );
-        render();
-      }),
+    (row.onclick = () => {
+      state.selectedPatient = state.patients.find(
+        (p) => p.id === Number(row.dataset.patientId),
+      );
+      render();
+    }),
   );
   $$("[data-view]").forEach(
     (el) =>
-      (el.onclick = () => {
-        state.view = el.dataset.view;
-        render();
-      }),
+    (el.onclick = () => {
+      state.view = el.dataset.view;
+      render();
+    }),
   );
   $$("[data-delete-treatment-plan]").forEach((button) => {
     button.onclick = async () => {
@@ -1929,37 +1938,27 @@ function bindView() {
       editTreatmentPlan(planId);
     };
   });
-  const treatmentPlanPatientSelect =
-    $("#treatmentPlanPatientSelect");
+  const treatmentPlanPatientSelect = $("#treatmentPlanPatientSelect");
 
-if (treatmentPlanPatientSelect) {
-    treatmentPlanPatientSelect.onchange =
-        () => {
+  if (treatmentPlanPatientSelect) {
+    treatmentPlanPatientSelect.onchange = () => {
+      const patientId = Number(treatmentPlanPatientSelect.value) || null;
 
-            const patientId =
-                Number(
-                    treatmentPlanPatientSelect.value
-                ) || null;
+      state.selectedPatient =
+        state.patients.find((patient) => patient.id === patientId) || null;
 
-            state.selectedPatient =
-                state.patients.find(
-                    (patient) =>
-                        patient.id ===
-                        patientId
-                ) || null;
-
-            render();
-        };
-}
+      render();
+    };
+  }
   $$("[data-tooth]").forEach(
     (el) => (el.onclick = () => openTooth(Number(el.dataset.tooth))),
   );
   $$("[data-mode]").forEach(
     (el) =>
-      (el.onclick = () => {
-        state.toothMode = el.dataset.mode;
-        render();
-      }),
+    (el.onclick = () => {
+      state.toothMode = el.dataset.mode;
+      render();
+    }),
   );
   $$("[data-delete-appointment]").forEach((button) => {
     button.onclick = async () => {
@@ -2030,7 +2029,13 @@ if (treatmentPlanPatientSelect) {
       }
     };
   });
+  $$("[data-open-xray]").forEach((element) => {
+    element.onclick = () => {
+      const xrayId = Number(element.dataset.openXray);
 
+      openXrayViewer(xrayId);
+    };
+  });
   $$("[data-delete-xray]").forEach((button) => {
     button.onclick = async () => {
       const xrayId = Number(button.dataset.deleteXray);
@@ -2094,31 +2099,31 @@ if (treatmentPlanPatientSelect) {
   });
   $$("[data-edit-prescription]").forEach(
     (button) =>
-      (button.onclick = () =>
-        editPrescription(Number(button.dataset.editPrescription))),
+    (button.onclick = () =>
+      editPrescription(Number(button.dataset.editPrescription))),
   );
   $$("[data-print-prescription]").forEach(
     (button) =>
-      (button.onclick = () =>
-        printPrescription(Number(button.dataset.printPrescription))),
+    (button.onclick = () =>
+      printPrescription(Number(button.dataset.printPrescription))),
   );
   $$("[data-agenda-date]").forEach(
     (button) =>
-      (button.onclick = () => {
-        const current = new Date(`${state.agendaDate}T12:00:00`);
-        if (button.dataset.agendaDate === "previous")
-          current.setDate(current.getDate() - 1);
-        if (button.dataset.agendaDate === "next")
-          current.setDate(current.getDate() + 1);
-        state.agendaDate = ["previous", "next"].includes(
-          button.dataset.agendaDate,
-        )
-          ? current.toISOString().slice(0, 10)
-          : button.dataset.agendaDate === "today"
-            ? today()
-            : button.dataset.agendaDate;
-        render();
-      }),
+    (button.onclick = () => {
+      const current = new Date(`${state.agendaDate}T12:00:00`);
+      if (button.dataset.agendaDate === "previous")
+        current.setDate(current.getDate() - 1);
+      if (button.dataset.agendaDate === "next")
+        current.setDate(current.getDate() + 1);
+      state.agendaDate = ["previous", "next"].includes(
+        button.dataset.agendaDate,
+      )
+        ? current.toISOString().slice(0, 10)
+        : button.dataset.agendaDate === "today"
+          ? today()
+          : button.dataset.agendaDate;
+      render();
+    }),
   );
   const treatmentPatientSelect = $("#treatmentPatientSelect");
   if (treatmentPatientSelect)
@@ -2192,93 +2197,64 @@ if (treatmentPlanPatientSelect) {
     };
   const xray = $("#xrayUpload");
 
-if (xray) {
+  if (xray) {
     xray.onchange = async () => {
-        const file = xray.files[0];
+      const file = xray.files[0];
 
-        if (!file) {
-            return;
-        }
+      if (!file) {
+        return;
+      }
 
-        if (!state.selectedPatient) {
-            toast(
-                t("selectPatientFirst")
-            );
-
-            xray.value = "";
-            return;
-        }
-
-        try {
-            const compressed =
-                await compressXray(file);
-
-            const base64Data =
-                await blobToBase64(
-                    compressed
-                );
-
-            const xrayType =
-                $("#xrayType")?.value ||
-                "other";
-
-            const toothNumber =
-                Number(
-                    $("#xrayToothNumber")?.value
-                ) || null;
-
-            const notes =
-                $("#xrayNotes")?.value.trim() ||
-                "";
-
-            await dbPut("xrays", {
-                patientId:
-                    state.selectedPatient.id,
-
-                filename:
-                    file.name,
-
-                base64Data,
-
-                mimeType:
-                    "image/webp",
-
-                originalMimeType:
-                    file.type,
-
-                toothTag:
-                    toothNumber,
-
-                type:
-                    xrayType,
-
-                date:
-                    today(),
-
-                notes:
-                    notes,
-            });
-
-            toast(
-                t("xrayUploaded")
-            );
-
-            await refresh();
-
-        } catch (error) {
-            console.error(
-                "X-ray upload failed:",
-                error
-            );
-
-            toast(
-                t("unableProcessXray")
-            );
-        }
+      if (!state.selectedPatient) {
+        toast(t("selectPatientFirst"));
 
         xray.value = "";
+        return;
+      }
+
+      try {
+        const compressed = await compressXray(file);
+
+        const base64Data = await blobToBase64(compressed);
+
+        const xrayType = $("#xrayType")?.value || "other";
+
+        const toothNumber = Number($("#xrayToothNumber")?.value) || null;
+
+        const notes = $("#xrayNotes")?.value.trim() || "";
+
+        await dbPut("xrays", {
+          patientId: state.selectedPatient.id,
+
+          filename: file.name,
+
+          base64Data,
+
+          mimeType: "image/webp",
+
+          originalMimeType: file.type,
+
+          toothTag: toothNumber,
+
+          type: xrayType,
+
+          date: today(),
+
+          notes: notes,
+        });
+
+        toast(t("xrayUploaded"));
+
+        await refresh();
+      } catch (error) {
+        console.error("X-ray upload failed:", error);
+
+        toast(t("unableProcessXray"));
+      }
+
+      xray.value = "";
     };
-}
+  }
   const saveToothNote = $("#saveToothNote");
   if (saveToothNote) saveToothNote.onclick = saveCurrentToothNote;
   $$("[data-action]").forEach(

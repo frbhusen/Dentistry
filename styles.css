@@ -1,64 +1,64 @@
 .lock-screen {
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
 
-    display: grid;
-    place-items: center;
+  display: grid;
+  place-items: center;
 
-    background: #f8fafc;
+  background: #f8fafc;
 }
 
 .lock-screen.hidden {
-    display: none;
+  display: none;
 }
 
 .lock-card {
-    width: min(380px, calc(100% - 32px));
-    padding: 32px;
+  width: min(380px, calc(100% - 32px));
+  padding: 32px;
 
-    background: #fff;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    box-shadow: var(--shadow);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
 
-    text-align: center;
+  text-align: center;
 }
 
 .lock-card .brand-mark {
-    margin: 0 auto 16px;
+  margin: 0 auto 16px;
 }
 
 .lock-card h1 {
-    margin: 0 0 6px;
+  margin: 0 0 6px;
 }
 
 .lock-card p {
-    color: var(--muted);
+  color: var(--muted);
 }
 
 .lock-card input {
-    width: 100%;
-    margin: 20px 0 12px;
+  width: 100%;
+  margin: 20px 0 12px;
 
-    padding: 12px;
-    text-align: center;
+  padding: 12px;
+  text-align: center;
 
-    letter-spacing: 6px;
-    font-size: 22px;
+  letter-spacing: 6px;
+  font-size: 22px;
 
-    border: 1px solid var(--line);
-    border-radius: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
 }
 
 .pin-error {
-    color: var(--danger) !important;
-    min-height: 20px;
+  color: var(--danger) !important;
+  min-height: 20px;
 }
 .app-locked {
-    filter: blur(8px);
-    pointer-events: none;
-    user-select: none;
+  filter: blur(8px);
+  pointer-events: none;
+  user-select: none;
 }
 .calendar-week {
   display: grid;
@@ -151,105 +151,105 @@
   color: var(--ink);
 }
 .patient-timeline {
-    position: relative;
+  position: relative;
 
-    display: grid;
-    gap: 0;
+  display: grid;
+  gap: 0;
 
-    margin-top: 16px;
-    padding-inline-start: 8px;
+  margin-top: 16px;
+  padding-inline-start: 8px;
 }
 
 .timeline-event {
-    position: relative;
+  position: relative;
 
-    display: grid;
-    grid-template-columns: 42px minmax(0, 1fr);
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
 
-    gap: 12px;
+  gap: 12px;
 
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
 
 .timeline-event:not(:last-child)::before {
-    content: "";
+  content: "";
 
-    position: absolute;
+  position: absolute;
 
-    top: 42px;
+  top: 42px;
 
-    bottom: 0;
+  bottom: 0;
 
-    left: 20px;
+  left: 20px;
 
-    width: 1px;
+  width: 1px;
 
-    background: var(--line);
+  background: var(--line);
 }
 
 .timeline-marker {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 
-    display: grid;
-    place-items: center;
+  display: grid;
+  place-items: center;
 
-    border: 1px solid var(--line);
-    border-radius: 50%;
+  border: 1px solid var(--line);
+  border-radius: 50%;
 
-    background: var(--surface);
+  background: var(--surface);
 
-    font-size: 17px;
+  font-size: 17px;
 }
 
 .timeline-content {
-    min-width: 0;
+  min-width: 0;
 
-    padding: 12px 14px;
+  padding: 12px 14px;
 
-    border: 1px solid var(--line);
-    border-radius: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
 
-    background: var(--surface);
+  background: var(--surface);
 }
 
 .timeline-event-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 
-    gap: 12px;
+  gap: 12px;
 }
 
 .timeline-event-header strong {
-    display: block;
+  display: block;
 }
 
 .timeline-event-header small {
-    display: block;
+  display: block;
 
-    margin-top: 4px;
+  margin-top: 4px;
 
-    color: var(--muted);
+  color: var(--muted);
 }
 
 .timeline-content p {
-    margin: 8px 0 0;
+  margin: 8px 0 0;
 
-    color: var(--muted);
+  color: var(--muted);
 
-    font-size: 13px;
+  font-size: 13px;
 }
 
 .timeline-empty {
-    padding: 20px 0;
+  padding: 20px 0;
 
-    color: var(--muted);
+  color: var(--muted);
 
-    text-align: center;
+  text-align: center;
 }
 @media (max-width: 700px) {
   .calendar-week {
@@ -418,120 +418,120 @@
   max-width: 420px;
 }
 .treatment-status-select {
-    min-width: 130px;
+  min-width: 130px;
 
-    padding: 6px 8px;
+  padding: 6px 8px;
 
-    border: 1px solid var(--line);
+  border: 1px solid var(--line);
 
-    border-radius: 7px;
+  border-radius: 7px;
 
-    background: #fff;
+  background: #fff;
 
-    color: var(--ink);
+  color: var(--ink);
 
-    font-size: 12px;
+  font-size: 12px;
 }
 .treatment-plan-list {
-    display: grid;
-    gap: 10px;
-    margin-top: 18px;
+  display: grid;
+  gap: 10px;
+  margin-top: 18px;
 }
 
 .treatment-plan-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 
-    padding: 14px;
+  padding: 14px;
 
-    border: 1px solid var(--line);
-    border-radius: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
 
-    background: #fff;
+  background: #fff;
 }
 
 .treatment-plan-main {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .treatment-plan-main strong {
-    display: block;
+  display: block;
 }
 
 .treatment-plan-main small {
-    display: block;
-    margin-top: 4px;
-    color: var(--muted);
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
 }
 
 .treatment-plan-tooth {
-    width: 40px;
-    height: 40px;
+  width: 40px;
+  height: 40px;
 
-    display: grid;
-    place-items: center;
+  display: grid;
+  place-items: center;
 
-    flex-shrink: 0;
+  flex-shrink: 0;
 
-    border-radius: 8px;
+  border-radius: 8px;
 
-    background: #f0f9ff;
-    color: var(--primary);
+  background: #f0f9ff;
+  color: var(--primary);
 
-    font-weight: 700;
+  font-weight: 700;
 }
 
 .treatment-plan-details {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @media (max-width: 700px) {
-    .treatment-plan-item {
-        align-items: flex-start;
-        flex-direction: column;
-    }
+  .treatment-plan-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
 
-    .treatment-plan-details {
-        width: 100%;
-        flex-wrap: wrap;
-    }
+  .treatment-plan-details {
+    width: 100%;
+    flex-wrap: wrap;
+  }
 }
 .treatment-plan-actions {
-    display: flex;
-    align-items: center;
-    gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .treatment-plan-delete {
-    min-width: 36px;
-    padding-inline: 10px;
+  min-width: 36px;
+  padding-inline: 10px;
 
-    color: var(--danger);
+  color: var(--danger);
 
-    border: 1px solid #fecaca;
+  border: 1px solid #fecaca;
 
-    background: #fff;
+  background: #fff;
 }
 
 .treatment-plan-delete:hover {
-    background: var(--danger-bg);
+  background: var(--danger-bg);
 }
 
 @media (max-width: 700px) {
-    .treatment-plan-actions {
-        width: 100%;
-    }
+  .treatment-plan-actions {
+    width: 100%;
+  }
 
-    .treatment-plan-actions .button {
-        flex: 1;
-    }
+  .treatment-plan-actions .button {
+    flex: 1;
+  }
 }
 :root {
   --surface: #fff;
@@ -1688,7 +1688,14 @@ textarea {
   padding: 0;
   border: 0;
 }
+.modal-card:has(.xray-viewer) {
+    width: min(
+        1200px,
+        calc(100vw - 32px)
+    );
 
+    max-width: 1200px;
+}
 .xray-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -1713,97 +1720,221 @@ textarea {
   font-size: 11px;
 }
 .xray-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .xray-delete-button {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
 
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 
-    display: grid;
-    place-items: center;
+  display: grid;
+  place-items: center;
 
-    border: 1px solid #fecaca;
-    border-radius: 7px;
+  border: 1px solid #fecaca;
+  border-radius: 7px;
 
-    background: #fff;
-    color: var(--danger);
+  background: #fff;
+  color: var(--danger);
 
-    font-size: 18px;
-    line-height: 1;
+  font-size: 18px;
+  line-height: 1;
 }
 
 .xray-delete-button:hover {
-    background: var(--danger-bg);
+  background: var(--danger-bg);
 }
 
 .xray-upload-form {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 
-    margin: 18px 0 24px;
+  margin: 18px 0 24px;
 
-    padding: 18px;
+  padding: 18px;
 
-    background: #f8fafc;
+  background: #f8fafc;
 
-    border: 1px solid var(--line);
+  border: 1px solid var(--line);
 
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .xray-upload-form .full-span {
-    grid-column: 1 / -1;
+  grid-column: 1 / -1;
 }
 
 .xray-upload-form > .button {
-    width: fit-content;
+  width: fit-content;
 }
 
 .xray-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 
-    margin-top: 6px;
+  margin-top: 6px;
 }
 
 .xray-meta span {
-    padding: 3px 7px;
+  padding: 3px 7px;
 
-    border-radius: 5px;
+  border-radius: 5px;
 
-    background: #f1f5f9;
+  background: #f1f5f9;
 
-    color: var(--muted);
+  color: var(--muted);
 
-    font-size: 11px;
+  font-size: 11px;
 }
 
 .xray-notes {
-    margin: 8px 0 0;
+  margin: 8px 0 0;
 
-    color: var(--muted);
+  color: var(--muted);
 
-    font-size: 12px;
+  font-size: 12px;
 
-    line-height: 1.5;
+  line-height: 1.5;
+}
+.xray-viewer {
+  width: min(1100px, 90vw);
+}
+
+.xray-viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 14px;
+
+  margin-bottom: 14px;
+
+  flex-wrap: wrap;
+}
+
+.xray-viewer-info {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+}
+
+.xray-viewer-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 6px;
+
+  flex-wrap: wrap;
+}
+
+.xray-zoom-label {
+  min-width: 52px;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  color: var(--muted);
+}
+
+.xray-viewer-stage {
+  position: relative;
+
+  width: 100%;
+  min-height: 55vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  overflow: auto;
+
+  padding: 20px;
+
+  background: #0f172a;
+
+  border-radius: 10px;
+}
+
+.xray-viewer-stage img {
+  display: block;
+
+  max-width: 100%;
+  max-height: 65vh;
+
+  object-fit: contain;
+
+  transform-origin: center center;
+
+  transition: transform 0.2s ease;
+}
+
+.xray-viewer-notes {
+  margin-top: 14px;
+
+  padding: 12px 14px;
+
+  border: 1px solid var(--line);
+
+  border-radius: 8px;
+
+  background: var(--surface);
+}
+
+.xray-viewer-notes p {
+  margin: 6px 0 0;
+
+  color: var(--muted);
+
+  line-height: 1.6;
+}
+
+.timeline-event-clickable,
+.xray-item-clickable {
+  cursor: pointer;
+}
+
+.timeline-event-clickable:hover .timeline-content,
+.xray-item-clickable:hover {
+  border-color: var(--primary);
 }
 
 @media (max-width: 700px) {
-    .xray-upload-form {
-        grid-template-columns: 1fr;
-    }
+  .xray-viewer {
+    width: 100%;
+  }
 
-    .xray-upload-form .full-span {
-        grid-column: auto;
-    }
+  .xray-viewer-stage {
+    min-height: 45vh;
+
+    padding: 10px;
+  }
+
+  .xray-viewer-actions {
+    width: 100%;
+  }
+
+  .xray-viewer-actions .button {
+    flex: 1;
+  }
+}
+@media (max-width: 700px) {
+  .xray-upload-form {
+    grid-template-columns: 1fr;
+  }
+
+  .xray-upload-form .full-span {
+    grid-column: auto;
+  }
 }
 
 .toast {
@@ -1819,7 +1950,6 @@ textarea {
   animation: rise 0.2s ease;
 }
 
-
 /* Custom App Footer */
 .app-footer {
   display: flex;
@@ -1827,10 +1957,10 @@ textarea {
   align-items: center;
   gap: 5px;
   padding-top: 24px;
-  
+
   /* Change this from 40px to auto */
-  margin-top: auto; 
-  
+  margin-top: auto;
+
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 12px;
@@ -1852,29 +1982,29 @@ textarea {
 }
 
 .undo-toast {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
 }
 
 .undo-toast button {
-    padding: 5px 10px;
+  padding: 5px 10px;
 
-    background: transparent;
+  background: transparent;
 
-    border: 1px solid currentColor;
-    border-radius: 6px;
+  border: 1px solid currentColor;
+  border-radius: 6px;
 
-    color: inherit;
+  color: inherit;
 
-    font-weight: 700;
+  font-weight: 700;
 
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .undo-toast button:hover {
-    background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 @keyframes rise {
