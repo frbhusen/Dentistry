@@ -412,8 +412,216 @@ function tooth(number) {
 function renderPatients() {
   return `<section class="content-grid"><div class="card"><div class="card-heading"><h2>${t("patients")}</h2><button class="button button-primary" data-action="newPatient">＋ ${t("newPatient")}</button></div>${patientSelector("patientRecordSelect", state.selectedPatient)}<div id="patientList">${state.patients.map(patientRow).join("")}</div></div><div class="card">${state.selectedPatient ? patientForm(state.selectedPatient) : `<p class="muted">${t("selectPatient")}</p>`}</div></section>`;
 }
+
+function renderPatientTimeline(patientId) {
+    const events = [];
+
+    // Appointments
+    state.appointments
+        .filter((item) => item.patientId === patientId)
+        .forEach((item) => {
+            events.push({
+                type: "appointment",
+                date: item.date || "",
+                time: item.startTime || "",
+                title: item.procedure || t("appointment"),
+                description:
+                    `${item.startTime || ""} · ${t(
+                        item.status || "booked"
+                    )}`,
+                icon: "📅",
+                status: item.status || "booked",
+            });
+        });
+
+    // Treatments
+    state.treatments
+        .filter((item) => item.patientId === patientId)
+        .forEach((item) => {
+            events.push({
+                type: "treatment",
+                date: item.date || "",
+                time: "",
+                title:
+                    item.description ||
+                    t("treatment"),
+                description:
+                    `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${money(item.fee)}`,
+                icon: "🦷",
+                status: item.status || "planned",
+            });
+        });
+
+    // Treatment plans
+    state.treatmentPlans
+        .filter((item) => item.patientId === patientId)
+        .forEach((item) => {
+            events.push({
+                type: "treatment-plan",
+                date:
+                    item.updatedAt ||
+                    item.createdAt ||
+                    "",
+                time: "",
+                title:
+                    item.procedure ||
+                    t("treatmentPlan"),
+                description:
+                    `${item.toothNumber ? `#${item.toothNumber} · ` : ""}${t(
+                        "diagnosis"
+                    )}: ${item.diagnosis || "—"}`,
+                icon: "📋",
+                status: item.status || "planned",
+            });
+        });
+
+    // Prescriptions
+    state.prescriptions
+        .filter((item) => item.patientId === patientId)
+        .forEach((item) => {
+            events.push({
+                type: "prescription",
+                date: item.date || "",
+                time: "",
+                title: t("prescriptions"),
+                description:
+                    item.medications
+                        ?.map((medication) =>
+                            medication.name
+                        )
+                        .join(", ") ||
+                    t("medication"),
+                icon: "💊",
+                status: "",
+            });
+        });
+
+    // X-rays
+    state.xrays
+        .filter((item) => item.patientId === patientId)
+        .forEach((item) => {
+            events.push({
+                type: "xray",
+                date: item.date || "",
+                time: "",
+                title:
+                    item.filename ||
+                    t("xrays"),
+                description:
+                    `${t(
+                        item.type || "other"
+                    )}${
+                        item.toothTag
+                            ? ` · ${t(
+                                  "toothNumber"
+                              )} #${item.toothTag}`
+                            : ""
+                    }`,
+                icon: "📷",
+                status: "",
+            });
+        });
+
+    // Newest first
+    events.sort((a, b) => {
+        const first =
+            `${b.date} ${b.time}`.trim();
+
+        const second =
+            `${a.date} ${a.time}`.trim();
+
+        return first.localeCompare(second);
+    });
+
+    if (!events.length) {
+        return `
+            <div class="timeline-empty">
+                ${t("noVisits")}
+            </div>
+        `;
+    }
+
+    return `
+        <div class="patient-timeline">
+
+            ${events
+                .map(
+                    (event) => `
+                        <div class="timeline-event">
+
+                            <div class="timeline-marker">
+                                ${event.icon}
+                            </div>
+
+                            <div class="timeline-content">
+
+                                <div class="timeline-event-header">
+
+                                    <div>
+                                        <strong>
+                                            ${esc(event.title)}
+                                        </strong>
+
+                                        <small>
+                                            ${esc(event.date)}
+                                            ${
+                                                event.time
+                                                    ? ` · ${esc(
+                                                          event.time
+                                                      )}`
+                                                    : ""
+                                            }
+                                        </small>
+                                    </div>
+
+                                    ${
+                                        event.status
+                                            ? `
+                                                <span class="badge">
+                                                    ${t(
+                                                        event.status
+                                                    )}
+                                                </span>
+                                            `
+                                            : ""
+                                    }
+
+                                </div>
+
+                                <p>
+                                    ${esc(
+                                        event.description
+                                    )}
+                                </p>
+
+                            </div>
+
+                        </div>
+                    `
+                )
+                .join("")}
+
+        </div>
+    `;
+}
+
 function patientForm(patient) {
-  return `<div class="card-heading"><h2>${esc(patient.name)}</h2><span class="badge ${patient.allergies ? "badge-danger" : ""}">${patient.allergies ? "! " + esc(patient.allergies) : t("healthy")}</span></div>${patient.medicalFlags ? `<div class="alert-banner">⚠ ${esc(patient.medicalFlags)}</div>` : ""}<form id="patientForm" class="form-grid"><div class="field"><label>${t("patient")}</label><input name="name" value="${esc(patient.name)}" required></div><div class="field"><label>${t("phone")}</label><input name="phone" value="${esc(patient.phone)}"></div><div class="field"><label>${t("location")}</label><input name="location" value="${esc(patient.location)}"></div><div class="field"><label>${t("workStudy")}</label><input name="workStudy" value="${esc(patient.workStudy)}"></div><div class="field"><label>${t("dob")}</label><input type="date" name="dob" value="${esc(patient.dob)}"></div><div class="field"><label>${t("gender")}</label><select name="gender"><option value="Female" ${patient.gender === "Female" || !patient.gender ? "selected" : ""}>Female</option><option value="Male" ${patient.gender === "Male" ? "selected" : ""}>Male</option></select></div><div class="field"><label>${t("allergies")}</label><input name="allergies" value="${esc(patient.allergies)}"></div><div class="field full-span"><label>${t("medicalFlags")}</label><input name="medicalFlags" value="${esc(patient.medicalFlags)}"></div><div class="field full-span"><label>${t("notes")}</label><textarea name="notes" rows="3">${esc(patient.notes)}</textarea></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button><button type="button" class="button delete-patient-button" data-delete-patient="${patient.id}">${t("deletePatient")}</button></div></form><div class="card-heading" style="margin-top:28px"><h3>${t("clinicalHistory")}</h3></div><div class="timeline">${
+  return `<div class="card-heading"><h2>${esc(patient.name)}</h2><span class="badge ${patient.allergies ? "badge-danger" : ""}">${patient.allergies ? "! " + esc(patient.allergies) : t("healthy")}</span></div>${patient.medicalFlags ? `<div class="alert-banner">⚠ ${esc(patient.medicalFlags)}</div>` : ""}<form id="patientForm" class="form-grid"><div class="field"><label>${t("patient")}</label><input name="name" value="${esc(patient.name)}" required></div><div class="field"><label>${t("phone")}</label><input name="phone" value="${esc(patient.phone)}"></div><div class="field"><label>${t("location")}</label><input name="location" value="${esc(patient.location)}"></div><div class="field"><label>${t("workStudy")}</label><input name="workStudy" value="${esc(patient.workStudy)}"></div><div class="field"><label>${t("dob")}</label><input type="date" name="dob" value="${esc(patient.dob)}"></div><div class="field"><label>${t("gender")}</label><select name="gender"><option value="Female" ${patient.gender === "Female" || !patient.gender ? "selected" : ""}>Female</option><option value="Male" ${patient.gender === "Male" ? "selected" : ""}>Male</option></select></div><div class="field"><label>${t("allergies")}</label><input name="allergies" value="${esc(patient.allergies)}"></div><div class="field full-span"><label>${t("medicalFlags")}</label><input name="medicalFlags" value="${esc(patient.medicalFlags)}"></div><div class="field full-span"><label>${t("notes")}</label><textarea name="notes" rows="3">${esc(patient.notes)}</textarea></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button><button type="button" class="button delete-patient-button" data-delete-patient="${patient.id}">${t("deletePatient")}</button></div></form><div
+    class="card-heading"
+    style="margin-top:28px"
+>
+    <div>
+        <h3>
+            ${t("clinicalHistory")}
+        </h3>
+
+        <p class="muted">
+            ${t("patientTimeline")}
+        </p>
+    </div>
+</div>
+
+${renderPatientTimeline(patient.id)}<div class="timeline">${
     state.treatments
       .filter((item) => item.patientId === patient.id)
       .map(
@@ -424,21 +632,59 @@ function patientForm(patient) {
   }</div>`;
 }
 function addTreatmentPlan() {
-  const patient = state.selectedPatient;
 
-  if (!patient) {
-    toast(t("selectPatient"));
+    const patientOptions =
+        state.patients
+            .map(
+                (patient) =>
+                    `<option
+                        value="${patient.id}"
+                        ${
+                            patient.id ===
+                            state.selectedPatient?.id
+                                ? "selected"
+                                : ""
+                        }
+                    >
+                        ${esc(
+                            patient.name
+                        )}
+                        ·
+                        ${esc(
+                            patient.phone || ""
+                        )}
+                    </option>`
+            )
+            .join("");
 
-    return;
-  }
-
-  modal(
-    t("addTreatmentPlan"),
-    `
+    modal(
+        t("addTreatmentPlan"),
+        `
         <form
             id="treatmentPlanForm"
             class="form-grid"
         >
+
+            <div class="field full-span">
+
+                <label>
+                    ${t("patient")}
+                </label>
+
+                <select
+                    name="patientId"
+                    required
+                >
+
+                    <option value="">
+                        ${t("selectPatient")}
+                    </option>
+
+                    ${patientOptions}
+
+                </select>
+
+            </div>
 
             <div class="field">
 
@@ -585,46 +831,100 @@ function addTreatmentPlan() {
             </div>
 
         </form>
-        `,
-  );
+        `
+    );
 
-  $("#treatmentPlanForm").onsubmit = async (event) => {
-    event.preventDefault();
+    $("#treatmentPlanForm").onsubmit =
+        async (event) => {
 
-    const data = Object.fromEntries(new FormData(event.target));
+            event.preventDefault();
 
-    try {
-      await dbPut("treatmentPlans", {
-        patientId: patient.id,
+            const data =
+                Object.fromEntries(
+                    new FormData(
+                        event.target
+                    )
+                );
 
-        toothNumber: Number(data.toothNumber) || null,
+            const patient =
+                state.patients.find(
+                    (item) =>
+                        item.id ===
+                        Number(
+                            data.patientId
+                        )
+                );
 
-        diagnosis: data.diagnosis,
+            if (!patient) {
+                toast(
+                    t("selectPatient")
+                );
 
-        procedure: data.procedure,
+                return;
+            }
 
-        fee: Number(data.fee) || 0,
+            try {
 
-        priority: data.priority,
+                await dbPut(
+                    "treatmentPlans",
+                    {
+                        patientId:
+                            patient.id,
 
-        status: data.status,
+                        toothNumber:
+                            Number(
+                                data.toothNumber
+                            ) || null,
 
-        notes: data.notes || "",
+                        diagnosis:
+                            data.diagnosis,
 
-        createdAt: new Date().toISOString(),
+                        procedure:
+                            data.procedure,
 
-        updatedAt: new Date().toISOString(),
-      });
+                        fee:
+                            Number(
+                                data.fee
+                            ) || 0,
 
-      $("#modal").classList.remove("show");
+                        priority:
+                            data.priority,
 
-      await refresh();
-    } catch (error) {
-      console.error("Failed to create treatment plan:", error);
+                        status:
+                            data.status,
 
-      toast("Unable to save treatment plan.");
-    }
-  };
+                        notes:
+                            data.notes || "",
+
+                        createdAt:
+                            new Date().toISOString(),
+
+                        updatedAt:
+                            new Date().toISOString(),
+                    }
+                );
+
+                state.selectedPatient =
+                    patient;
+
+                $("#modal").classList.remove(
+                    "show"
+                );
+
+                await refresh();
+
+            } catch (error) {
+
+                console.error(
+                    "Failed to create treatment plan:",
+                    error
+                );
+
+                toast(
+                    "Unable to save treatment plan."
+                );
+            }
+        };
 }
 function editTreatmentPlan(id) {
   const plan = state.treatmentPlans.find((item) => item.id === id);
@@ -856,24 +1156,151 @@ function editTreatmentPlan(id) {
     }
   };
 }
-function renderTreatmentPlans() {
-  const patient = state.selectedPatient;
+function renderTreatmentPlanList(patientId) {
+    const plans =
+        state.treatmentPlans.filter(
+            (item) =>
+                item.patientId === patientId
+        );
 
-  if (!patient) {
-    return `
-            <section class="card">
-                <p class="muted">
-                    ${t("selectPatient")}
-                </p>
-            </section>
+    if (!plans.length) {
+        return `
+            <p class="muted">
+                ${t("noTreatmentPlans")}
+            </p>
         `;
-  }
+    }
 
-  const plans = state.treatmentPlans.filter(
-    (item) => item.patientId === patient.id,
-  );
+    return `
+        <div class="treatment-plan-list">
 
-  return `
+            ${plans
+                .map(
+                    (item) => `
+                        <div
+                            class="treatment-plan-item"
+                        >
+
+                            <div
+                                class="treatment-plan-main"
+                            >
+
+                                <div
+                                    class="treatment-plan-tooth"
+                                >
+                                    ${
+                                        item.toothNumber
+                                            ? `#${esc(
+                                                  item.toothNumber
+                                              )}`
+                                            : "—"
+                                    }
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        ${esc(
+                                            item.procedure
+                                        )}
+                                    </strong>
+
+                                    <small>
+                                        ${t("diagnosis")}:
+                                        ${esc(
+                                            item.diagnosis ||
+                                                "—"
+                                        )}
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="treatment-plan-details"
+                            >
+
+                                <span
+                                    class="badge"
+                                >
+                                    ${t(
+                                        item.priority ||
+                                            "medium"
+                                    )}
+                                </span>
+
+                                <span
+                                    class="badge"
+                                >
+                                    ${t(
+                                        item.status ||
+                                            "planned"
+                                    )}
+                                </span>
+
+                                <strong>
+                                    ${money(
+                                        item.fee
+                                    )}
+                                </strong>
+
+                                <div
+                                    class="treatment-plan-actions"
+                                >
+
+                                    <button
+                                        type="button"
+                                        class="button button-ghost"
+                                        data-edit-treatment-plan="${item.id}"
+                                    >
+                                        ${t("edit")}
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        class="button treatment-plan-delete"
+                                        data-delete-treatment-plan="${item.id}"
+                                    >
+                                        ×
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    `
+                )
+                .join("")}
+
+        </div>
+    `;
+}
+function renderTreatmentPlans() {
+    const patient =
+        state.selectedPatient;
+
+    const patientOptions =
+        state.patients
+            .map(
+                (item) =>
+                    `<option
+                        value="${item.id}"
+                        ${
+                            item.id === patient?.id
+                                ? "selected"
+                                : ""
+                        }
+                    >
+                        ${esc(item.name)}
+                        ·
+                        ${esc(item.phone || "")}
+                    </option>`
+            )
+            .join("");
+
+    return `
         <section class="card">
 
             <div class="card-heading">
@@ -883,14 +1310,31 @@ function renderTreatmentPlans() {
                         ${t("treatmentPlan")}
                     </h2>
 
-                    <p class="muted">
-                        ${esc(patient.name)}
-                    </p>
+                    ${
+                        patient
+                            ? `
+                                <p class="muted">
+                                    ${esc(
+                                        patient.name
+                                    )}
+                                </p>
+                            `
+                            : `
+                                <p class="muted">
+                                    ${t("selectPatient")}
+                                </p>
+                            `
+                    }
                 </div>
 
                 <button
                     class="button button-primary"
                     data-action="addTreatmentPlan"
+                    ${
+                        !patient
+                            ? "disabled"
+                            : ""
+                    }
                 >
                     ＋
                     ${t("addTreatmentPlan")}
@@ -898,95 +1342,33 @@ function renderTreatmentPlans() {
 
             </div>
 
+            <div class="field treatment-plan-patient-picker">
+
+                <label>
+                    ${t("patient")}
+                </label>
+
+                <select id="treatmentPlanPatientSelect">
+
+                    <option value="">
+                        ${t("selectPatient")}
+                    </option>
+
+                    ${patientOptions}
+
+                </select>
+
+            </div>
+
             ${
-              plans.length
-                ? `
-                        <div class="treatment-plan-list">
-
-                            ${plans
-                              .map(
-                                (item) =>
-                                  `
-                                        <div
-                                            class="treatment-plan-item"
-                                        >
-
-                                            <div
-                                                class="treatment-plan-main"
-                                            >
-
-                                                <div
-                                                    class="treatment-plan-tooth"
-                                                >
-                                                    ${
-                                                      item.toothNumber
-                                                        ? `#${esc(item.toothNumber)}`
-                                                        : "—"
-                                                    }
-                                                </div>
-
-                                                <div>
-                                                    <strong>
-                                                        ${esc(item.procedure)}
-                                                    </strong>
-
-                                                    <small>
-                                                        ${t("diagnosis")}:
-                                                        ${esc(
-                                                          item.diagnosis || "—",
-                                                        )}
-                                                    </small>
-                                                </div>
-
-                                            </div>
-
-                                            <div class="treatment-plan-details">
-
-    <span class="badge">
-        ${t(item.priority || "medium")}
-    </span>
-
-    <span class="badge">
-        ${t(item.status || "planned")}
-    </span>
-
-    <strong>
-        ${money(item.fee)}
-    </strong>
-
-    <div class="treatment-plan-actions">
-
-        <button
-            type="button"
-            class="button button-ghost"
-            data-edit-treatment-plan="${item.id}"
-        >
-            ${t("edit")}
-        </button>
-
-        <button
-            type="button"
-            class="button treatment-plan-delete"
-            data-delete-treatment-plan="${item.id}"
-        >
-            ×
-        </button>
-
-    </div>
-
-</div>
-
-                                        </div>
-                                    `,
-                              )
-                              .join("")}
-
+                patient
+                    ? renderTreatmentPlanList(
+                          patient.id
+                      )
+                    : `
+                        <div class="timeline-empty">
+                            ${t("selectPatient")}
                         </div>
-                    `
-                : `
-                        <p class="muted">
-                            ${t("noTreatmentPlans")}
-                        </p>
                     `
             }
 
@@ -1555,6 +1937,28 @@ function bindView() {
       editTreatmentPlan(planId);
     };
   });
+  const treatmentPlanPatientSelect =
+    $("#treatmentPlanPatientSelect");
+
+if (treatmentPlanPatientSelect) {
+    treatmentPlanPatientSelect.onchange =
+        () => {
+
+            const patientId =
+                Number(
+                    treatmentPlanPatientSelect.value
+                ) || null;
+
+            state.selectedPatient =
+                state.patients.find(
+                    (patient) =>
+                        patient.id ===
+                        patientId
+                ) || null;
+
+            render();
+        };
+}
   $$("[data-tooth]").forEach(
     (el) => (el.onclick = () => openTooth(Number(el.dataset.tooth))),
   );

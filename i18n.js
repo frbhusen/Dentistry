@@ -131,6 +131,9 @@ deleteTreatmentPlan: "Delete treatment plan",
 treatmentPlanDeleted: "Treatment plan deleted",
 unableDeleteTreatmentPlan: "Unable to delete treatment plan",
 unableSaveTreatmentPlan: "Unable to save treatment plan",
+patientTimeline: "Patient timeline",
+appointment: "Appointment",
+treatment: "Treatment",
   },
   ar: {
     appName: "AeroDent",
@@ -263,6 +266,11 @@ deleteTreatmentPlan: "حذف الخطة العلاجية",
 treatmentPlanDeleted: "تم حذف الخطة العلاجية",
 unableDeleteTreatmentPlan: "تعذر حذف الخطة العلاجية",
 unableSaveTreatmentPlan: "تعذر حفظ الخطة العلاجية",
+
+patientTimeline: "السجل الزمني للمريض",
+appointment: "موعد",
+treatment: "علاج",
+
 
   },
 };
