@@ -52,14 +52,6 @@ async function refresh(preserveEmptySelection = false) {
 
   state.treatments = await dbGetAll("treatments");
 
-for (const treatment of state.treatments) {
-    if (treatment.status === "Planned") {
-        treatment.status = "planned";
-
-        await dbPut("treatments", treatment);
-    }
-}
-
   render();
 }
 

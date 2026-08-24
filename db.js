@@ -367,7 +367,7 @@ async function seedDatabase() {
     toothNumber: 14,
     description: "Composite restoration",
     fee: 180,
-    status: "Planned",
+    status: "planned",
     date: new Date().toISOString().slice(0, 10),
   });
 }

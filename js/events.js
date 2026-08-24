@@ -1133,19 +1133,24 @@ function bindKeyboardEvents() {
 
 
 function bindInactivityEvents() {
-    [
+    const activityEvents = [
         "mousemove",
         "mousedown",
         "keydown",
         "touchstart",
-    ].forEach((eventName) => {
+        "scroll",
+    ];
+
+    activityEvents.forEach((eventName) => {
         document.addEventListener(
             eventName,
             () => {
+                const appShell =
+                    document.querySelector(".app-shell");
+
                 if (
-                    !document
-                        .querySelector(".app-shell")
-                        ?.classList.contains("app-locked")
+                    appShell &&
+                    !appShell.classList.contains("app-locked")
                 ) {
                     resetInactivityTimer();
                 }
@@ -1154,6 +1159,5 @@ function bindInactivityEvents() {
         );
     });
 }
-
 
 bindGlobalEvents();

@@ -167,23 +167,53 @@ async function verifyPIN() {
 
 let inactivityTimer = null;
 
+const INACTIVITY_LIMIT = 10 * 60 * 1000;
+
+let lastActivityTime = Date.now();
+
 function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
-    inactivityTimer = null;
 
     if (!state.settings.pinEnabled) {
         return;
     }
 
-    if (document.querySelector(".app-shell")?.classList.contains("app-locked")) {
+    if (
+        document
+            .querySelector(".app-shell")
+            ?.classList.contains("app-locked")
+    ) {
         return;
     }
 
-    inactivityTimer = setTimeout(() => {
-        inactivityTimer = null;
+    lastActivityTime = Date.now();
 
-        if (!document.querySelector(".app-shell")?.classList.contains("app-locked")) {
-            lockApp();
-        }
-    }, 10 * 60 * 1000);
+    inactivityTimer = setTimeout(checkInactivity, INACTIVITY_LIMIT);
+}
+
+function checkInactivity() {
+    if (!state.settings.pinEnabled) {
+        return;
+    }
+
+    if (
+        document
+            .querySelector(".app-shell")
+            ?.classList.contains("app-locked")
+    ) {
+        return;
+    }
+
+    const inactiveFor =
+        Date.now() - lastActivityTime;
+
+    if (inactiveFor >= INACTIVITY_LIMIT) {
+        lockApp();
+        return;
+    }
+
+    inactivityTimer = setTimeout(
+        checkInactivity,
+        INACTIVITY_LIMIT - inactiveFor
+    );
 }
