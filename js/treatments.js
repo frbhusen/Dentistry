@@ -17,7 +17,8 @@ function renderTreatments() {
         .map(
             (
                 item,
-            ) => `<tr><td>#${item.toothNumber || "—"}</td><td>${esc(item.description)}</td><td>${esc(item.date)}</td><td>${money(item.fee)}</td><td>
+            ) => `<tr><td>#${item.toothNumber || "—"}</td><td>${esc(item.description)}</td><td>${esc(item.date)}</td><td>${money(item.fee)}</td>
+            <td>
     <select
         class="treatment-status-select"
         data-treatment-status="${item.id}"
@@ -64,6 +65,24 @@ function renderTreatments() {
             ${t("cancelled")}
         </option>
     </select>
+</td>
+
+<td>
+    <button
+        type="button"
+        class="button button-ghost"
+        data-edit-treatment="${item.id}"
+    >
+        ${t("edit")}
+    </button>
+
+    <button
+        type="button"
+        class="button"
+        data-delete-treatment="${item.id}"
+    >
+        ×
+    </button>
 </td></tr>`,
         )
         .join(
@@ -128,4 +147,131 @@ function addTreatment() {
         $("#modal").classList.remove("show");
         await refresh();
     };
+}
+
+function editTreatment(id) {
+    const treatment =
+        state.treatments.find(
+            (item) => item.id === id
+        );
+
+    if (!treatment) {
+        return;
+    }
+
+    modal(
+        t("edit"),
+        `
+        <form id="editTreatmentForm" class="form-grid">
+
+            <div class="field">
+                <label>${t("tooth")}</label>
+                <input
+                    type="number"
+                    name="toothNumber"
+                    min="1"
+                    max="32"
+                    value="${esc(treatment.toothNumber || "")}"
+                >
+            </div>
+
+            <div class="field">
+                <label>${t("fee")}</label>
+                <input
+                    type="number"
+                    name="fee"
+                    min="0"
+                    step="0.01"
+                    value="${Number(treatment.fee || 0)}"
+                >
+            </div>
+
+            <div class="field full-span">
+                <label>${t("procedure")}</label>
+                <input
+                    name="description"
+                    required
+                    value="${esc(treatment.description || "")}"
+                >
+            </div>
+
+            <div class="form-actions full-span">
+                <button
+                    class="button button-primary"
+                    type="submit"
+                >
+                    ${t("save")}
+                </button>
+            </div>
+
+        </form>
+        `
+    );
+
+    $("#editTreatmentForm").onsubmit =
+        async (event) => {
+            event.preventDefault();
+
+            const data =
+                Object.fromEntries(
+                    new FormData(event.target)
+                );
+
+            await dbPut(
+                "treatments",
+                {
+                    ...treatment,
+                    toothNumber:
+                        Number(
+                            data.toothNumber
+                        ) || null,
+                    description:
+                        data.description,
+                    fee:
+                        Number(
+                            data.fee
+                        ) || 0,
+                }
+            );
+
+            $("#modal")
+                .classList
+                .remove("show");
+
+            await refresh();
+        };
+}
+
+async function deleteTreatment(id) {
+    const treatment =
+        state.treatments.find(
+            (item) => item.id === id
+        );
+
+    if (!treatment) {
+        return;
+    }
+
+    if (!confirm(t("confirmDeleteTreatment"))) {
+        return;
+    }
+
+    await dbDelete(
+        "treatments",
+        id
+    );
+
+    await refresh();
+
+    showUndo(
+        t("treatmentDeleted"),
+        async () => {
+            await dbPut(
+                "treatments",
+                treatment
+            );
+
+            await refresh();
+        }
+    );
 }

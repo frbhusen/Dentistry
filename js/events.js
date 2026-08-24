@@ -356,6 +356,29 @@ function bindTreatmentEvents() {
             };
         }
     );
+    $$("[data-edit-treatment]").forEach(
+    (button) => {
+        button.onclick = () =>
+            editTreatment(
+                Number(
+                    button.dataset
+                        .editTreatment
+                )
+            );
+    }
+);
+
+$$("[data-delete-treatment]").forEach(
+    (button) => {
+        button.onclick = () =>
+            deleteTreatment(
+                Number(
+                    button.dataset
+                        .deleteTreatment
+                )
+            );
+    }
+);
 }
 
 
