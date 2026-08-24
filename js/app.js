@@ -132,59 +132,6 @@ function newPatient() {
 }
 
 
-async function handleBackupImport(event) {
-  const file = event.target.files[0];
-
-  if (!file) {
-    return;
-  }
-
-  try {
-    const source = await file.text();
-
-    const data = parseExcelBackup(source);
-
-    if (!validateBackup(data)) {
-      throw new Error("Invalid backup structure.");
-    }
-
-    const confirmed = confirm(
-      t("confirmImport") ||
-      "Importing this backup will replace the current data. Continue?"
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    await safeImport(data);
-
-    await refresh(true);
-
-    toast(t("imported") || "Backup imported successfully.");
-
-  } catch (error) {
-    console.error("Backup import failed:", error);
-
-    alert(
-      error?.message ||
-      "Failed to import backup."
-    );
-  } finally {
-    event.target.value = "";
-  }
-}
-
-const importInput = $("#importInput");
-
-if (importInput) {
-  importInput.addEventListener(
-    "change",
-    handleBackupImport
-  );
-}
-
-
 
 function updateClock() {
   const now = new Date();
