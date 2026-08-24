@@ -86,6 +86,9 @@ function bindPatientEvents() {
                     treatmentPlanPatientSelect.value
                 ) || null;
 
+            state.treatmentPlanPatientId =
+                patientId;
+
             state.selectedPatient =
                 state.patients.find(
                     (patient) =>

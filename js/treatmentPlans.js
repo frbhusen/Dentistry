@@ -4,7 +4,11 @@ function addTreatmentPlan() {
             (patient) =>
                 `<option
                         value="${patient.id}"
-                        ${patient.id === state.selectedPatient?.id
+                        ${patient.id ===
+                    (
+                        state.treatmentPlanPatientId ||
+                        state.selectedPatient?.id
+                    )
                     ? "selected"
                     : ""
                 }
@@ -576,7 +580,12 @@ function renderTreatmentPlanList(patientId) {
     `;
 }
 function renderTreatmentPlans() {
-    const patient = state.selectedPatient;
+    const patient =
+        state.patients.find(
+            (item) =>
+                item.id ===
+                Number(state.treatmentPlanPatientId)
+        ) || state.selectedPatient;
 
     const patientOptions = state.patients
         .map(

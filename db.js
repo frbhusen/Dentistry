@@ -195,7 +195,37 @@ function validateImportedData(data) {
 
     patientIds.add(id);
   }
+  const patientLinkedStores = [
+  "odontograms",
+  "appointments",
+  "treatments",
+  "treatmentPlans",
+  "invoices",
+  "prescriptions",
+  "xrays",
+];
 
+for (const store of patientLinkedStores) {
+  for (const record of data[store] || []) {
+    if (
+      record.patientId === undefined ||
+      record.patientId === null ||
+      record.patientId === ""
+    ) {
+      throw new Error(
+        `Missing patient ID in ${store}.`
+      );
+    }
+
+    const patientId = Number(record.patientId);
+
+    if (!patientIds.has(patientId)) {
+      throw new Error(
+        `Invalid patient ID ${patientId} found in ${store}.`
+      );
+    }
+  }
+}
   return true;
 }
 

@@ -6,6 +6,7 @@ const state = {
     odontogramPatientId: null,
     treatmentPatientId: null,
     prescriptionPatientId: null,
+    treatmentPlanPatientId: null,
     printPrescriptionId: null,
     agendaDate:
         new Date()
