@@ -122,11 +122,18 @@ function renderAppointments() {
 
                                 <div>
                                     ${entries
-                        .filter(
-                            (item) =>
-                                item.startTime ===
-                                time
-                        )
+                        .filter((item) => {
+                            const appointmentStart =
+                                timeToMinutes(item.startTime);
+
+                            const slotStart =
+                                timeToMinutes(time);
+
+                            return (
+                                appointmentStart >= slotStart &&
+                                appointmentStart < slotStart + slot
+                            );
+                        })
                         .map(
                             (item) =>
                                 `
