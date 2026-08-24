@@ -6,7 +6,7 @@ const state = {
     odontogramPatientId: null,
     treatmentPatientId: null,
     prescriptionPatientId: null,
-
+    printPrescriptionId: null,
     agendaDate:
         new Date()
             .toISOString()

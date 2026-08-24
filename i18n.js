@@ -137,6 +137,10 @@ const I18N = {
     reset: "Reset",
     download: "Download",
     unableProcessXray: "Unable to process the X-ray image.",
+    pinIncorrect: "Incorrect PIN.",
+    pinInvalid: "PIN must contain 4–6 digits.",
+    pinMismatch: "PINs do not match.",
+    pinVerifyFailed: "Unable to verify PIN."
   },
   ar: {
     appName: "AeroDent",
@@ -277,6 +281,10 @@ const I18N = {
     reset: "إعادة ضبط",
     download: "تنزيل",
     unableProcessXray: "تعذر معالجة صورة الأشعة.",
+    pinIncorrect: "رمز PIN غير صحيح.",
+    pinInvalid: "يجب أن يتكون رمز PIN من 4–6 أرقام.",
+    pinMismatch: "رمزا PIN غير متطابقين.",
+    pinVerifyFailed: "تعذر التحقق من رمز PIN."
   },
 };
 I18N.en.export = "Export Excel";

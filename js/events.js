@@ -1145,15 +1145,9 @@ function bindInactivityEvents() {
                 eventName,
                 () => {
 
-                    if (
-                        !document.body
-                            .classList
-                            .contains(
-                                "app-locked"
-                            )
-                    ) {
-                        resetInactivityTimer();
-                    }
+                    if (!document.querySelector(".app-shell")?.classList.contains("app-locked")) {
+    resetInactivityTimer();
+}
                 },
                 true
             );

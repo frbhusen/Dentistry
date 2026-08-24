@@ -21,14 +21,11 @@ async function refresh(preserveEmptySelection = false) {
     ].map(dbGetAll),
   );
 
-  for (const patient of state.patients) {
-    if ("email" in patient || "bloodType" in patient) {
-      const { email, bloodType, ...cleanPatient } = patient;
-      await dbPut("patients", cleanPatient);
-    }
-  }
+
   state.patients = await dbGetAll("patients");
-  state.settings = (await dbGetAll("settings"))[0] || {
+  const savedSettings = (await dbGetAll("settings"))[0] || {};
+
+  state.settings = {
     id: 1,
     currencySymbol: "SYR",
     clinicName: "------ Dental Clinic",
@@ -39,6 +36,7 @@ async function refresh(preserveEmptySelection = false) {
     currentLanguage: "ar",
     pinEnabled: false,
     pinHash: "",
+    ...savedSettings,
   };
   currentLanguage = state.settings.currentLanguage || "ar";
   state.selectedPatient = preserveEmptySelection
@@ -50,14 +48,7 @@ async function refresh(preserveEmptySelection = false) {
       state.patients[0] ||
       null
       : state.patients[0] || null;
-  for (const treatment of state.treatments) {
-    if (treatment.status === "Planned") {
-      await dbPut("treatments", {
-        ...treatment,
-        status: "planned",
-      });
-    }
-  }
+
 
   state.treatments = await dbGetAll("treatments");
   render();

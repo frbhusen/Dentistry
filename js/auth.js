@@ -86,13 +86,13 @@ async function savePIN() {
     const confirmPIN = $("#confirmPINInput").value.trim();
 
     if (!/^\d{4,6}$/.test(pin)) {
-        $("#pinError").textContent = "PIN must contain 4–6 digits.";
+        $("#pinError").textContent = t("pinInvalid");
 
         return;
     }
 
     if (pin !== confirmPIN) {
-        $("#pinError").textContent = "PINs do not match.";
+        $("#pinError").textContent = t("pinMismatch");
 
         return;
     }
@@ -143,7 +143,7 @@ async function verifyPIN() {
 
             resetInactivityTimer();
         } else {
-            $("#pinError").textContent = "Incorrect PIN.";
+            $("#pinError").textContent = t("pinIncorrect");
 
             $("#pinInput").value = "";
 
@@ -152,7 +152,7 @@ async function verifyPIN() {
     } catch (error) {
         console.error("PIN verification failed:", error);
 
-        $("#pinError").textContent = "Unable to verify PIN.";
+        $("#pinError").textContent = t("pinVerifyFailed");
     }
 }
 
@@ -165,8 +165,7 @@ function resetInactivityTimer() {
         return;
     }
 
-    inactivityTimer = setTimeout(
-        () => {
+    inactivityTimer = setTimeout(() => {
             lockApp();
         },
         10 * 60 * 1000,

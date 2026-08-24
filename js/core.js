@@ -4,8 +4,8 @@ const $ = (selector) =>
 const $$ = (selector) =>
     [...document.querySelectorAll(selector)];
 
-const esc = (value) =>
-    String(value ?? "").replace(
+function esc(value) {
+    return String(value ?? "").replace(
         /[&<>"']/g,
         (char) =>
             ({
@@ -16,15 +16,16 @@ const esc = (value) =>
                 "'": "&#39;",
             })[char],
     );
-
-const today = () =>
-    new Date()
+}
+function today() {
+    return new Date()
         .toISOString()
         .slice(0, 10);
-
-const money = (value) =>
-    `SYR ${Number(value || 0).toFixed(2)}`;
-
+}
+function money(value) {
+    const symbol = state.settings?.currencySymbol || "SYR";
+    return `${symbol} ${Number(value || 0).toLocaleString()}`;
+}
 
 function excelText(value) {
     return String(value ?? "")

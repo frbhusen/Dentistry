@@ -1,12 +1,3 @@
-function excelText(value) {
-    return String(value ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-}
-
-
 async function exportData() {
     const data = await dbExport();
 
@@ -37,8 +28,8 @@ async function exportData() {
                                         typeof row[column] ===
                                             "object"
                                             ? JSON.stringify(
-                                                  row[column]
-                                              )
+                                                row[column]
+                                            )
                                             : row[column]
                                     )}</td>`
                             )
