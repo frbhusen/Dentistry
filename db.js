@@ -1,6 +1,6 @@
 const DB_NAME = "aerodent-db";
 
-const DB_VERSION = 2;
+const DB_VERSION = 3;
 
 const STORES = [
   "patients",
@@ -20,13 +20,27 @@ function openDB() {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;
+
       STORES.forEach((store) => {
+        let objectStore;
+
         if (!db.objectStoreNames.contains(store)) {
-          const os = db.createObjectStore(store, {
+          objectStore = db.createObjectStore(store, {
             keyPath: "id",
             autoIncrement: true,
           });
-          if (store !== "settings") os.createIndex("patientId", "patientId");
+        } else {
+          objectStore = request.transaction.objectStore(store);
+        }
+
+        if (
+          store !== "settings" &&
+          !objectStore.indexNames.contains("patientId")
+        ) {
+          objectStore.createIndex(
+            "patientId",
+            "patientId"
+          );
         }
       });
     };
@@ -80,6 +94,17 @@ async function dbDelete(store, id) {
 }
 async function dbDeletePatient(patientId) {
   const db = await dbReady();
+
+  const patient = await dbGet(
+    "patients",
+    patientId
+  );
+
+  if (!patient) {
+    throw new Error(
+      "Patient not found."
+    );
+  }
   const relatedStores = [
     "odontograms",
     "appointments",
@@ -196,36 +221,36 @@ function validateImportedData(data) {
     patientIds.add(id);
   }
   const patientLinkedStores = [
-  "odontograms",
-  "appointments",
-  "treatments",
-  "treatmentPlans",
-  "invoices",
-  "prescriptions",
-  "xrays",
-];
+    "odontograms",
+    "appointments",
+    "treatments",
+    "treatmentPlans",
+    "invoices",
+    "prescriptions",
+    "xrays",
+  ];
 
-for (const store of patientLinkedStores) {
-  for (const record of data[store] || []) {
-    if (
-      record.patientId === undefined ||
-      record.patientId === null ||
-      record.patientId === ""
-    ) {
-      throw new Error(
-        `Missing patient ID in ${store}.`
-      );
-    }
+  for (const store of patientLinkedStores) {
+    for (const record of data[store] || []) {
+      if (
+        record.patientId === undefined ||
+        record.patientId === null ||
+        record.patientId === ""
+      ) {
+        throw new Error(
+          `Missing patient ID in ${store}.`
+        );
+      }
 
-    const patientId = Number(record.patientId);
+      const patientId = Number(record.patientId);
 
-    if (!patientIds.has(patientId)) {
-      throw new Error(
-        `Invalid patient ID ${patientId} found in ${store}.`
-      );
+      if (!patientIds.has(patientId)) {
+        throw new Error(
+          `Invalid patient ID ${patientId} found in ${store}.`
+        );
+      }
     }
   }
-}
   return true;
 }
 
@@ -263,59 +288,59 @@ async function dbImport(data) {
 
 
 function verifyImportedData(original, imported) {
-    for (const store of STORES) {
-        const originalRows =
-            Array.isArray(original[store])
-                ? original[store]
-                : [];
+  for (const store of STORES) {
+    const originalRows =
+      Array.isArray(original[store])
+        ? original[store]
+        : [];
 
-        const importedRows =
-            Array.isArray(imported[store])
-                ? imported[store]
-                : [];
+    const importedRows =
+      Array.isArray(imported[store])
+        ? imported[store]
+        : [];
 
-        if (
-            originalRows.length !==
-            importedRows.length
-        ) {
-            console.error(
-                `Import verification failed for ${store}:`,
-                originalRows.length,
-                importedRows.length
-            );
+    if (
+      originalRows.length !==
+      importedRows.length
+    ) {
+      console.error(
+        `Import verification failed for ${store}:`,
+        originalRows.length,
+        importedRows.length
+      );
 
-            return false;
-        }
-
-        for (
-            let index = 0;
-            index < originalRows.length;
-            index++
-        ) {
-            const originalRow =
-                originalRows[index];
-
-            const importedRow =
-                importedRows[index];
-
-            if (
-                JSON.stringify(
-                    originalRow
-                ) !==
-                JSON.stringify(
-                    importedRow
-                )
-            ) {
-                console.error(
-                    `Import verification failed for ${store} record ${index}`
-                );
-
-                return false;
-            }
-        }
+      return false;
     }
 
-    return true;
+    for (
+      let index = 0;
+      index < originalRows.length;
+      index++
+    ) {
+      const originalRow =
+        originalRows[index];
+
+      const importedRow =
+        importedRows[index];
+
+      if (
+        JSON.stringify(
+          originalRow
+        ) !==
+        JSON.stringify(
+          importedRow
+        )
+      ) {
+        console.error(
+          `Import verification failed for ${store} record ${index}`
+        );
+
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 
@@ -396,6 +421,6 @@ async function seedDatabase() {
   });
 }
 */
-async function seedDatabase(){
+async function seedDatabase() {
   //No Demo
 }

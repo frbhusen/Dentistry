@@ -50,6 +50,38 @@ async function refresh(preserveEmptySelection = false) {
       null
       : state.patients[0] || null;
 
+  const patientIds = new Set(
+    state.patients.map((patient) => patient.id)
+  );
+
+  if (
+    state.odontogramPatientId !== null &&
+    !patientIds.has(Number(state.odontogramPatientId))
+  ) {
+    state.odontogramPatientId = null;
+  }
+
+  if (
+    state.treatmentPatientId !== null &&
+    !patientIds.has(Number(state.treatmentPatientId))
+  ) {
+    state.treatmentPatientId = null;
+  }
+
+  if (
+    state.treatmentPlanPatientId !== null &&
+    !patientIds.has(Number(state.treatmentPlanPatientId))
+  ) {
+    state.treatmentPlanPatientId = null;
+  }
+
+  if (
+    state.prescriptionPatientId !== null &&
+    !patientIds.has(Number(state.prescriptionPatientId))
+  ) {
+    state.prescriptionPatientId = null;
+  }
+
   state.treatments = await dbGetAll("treatments");
 
   render();
