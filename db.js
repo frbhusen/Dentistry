@@ -328,6 +328,7 @@ async function safeImport(data) {
   }
 }
 
+/* Demo patient 
 async function seedDatabase() {
   if ((await dbGetAll("patients")).length) return;
   const patientId = await dbPut("patients", {
@@ -369,4 +370,8 @@ async function seedDatabase() {
     status: "Planned",
     date: new Date().toISOString().slice(0, 10),
   });
+}
+*/
+async function seedDatabase(){
+  //No Demo
 }

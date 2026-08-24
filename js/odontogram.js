@@ -13,7 +13,6 @@ function renderOdontogram() {
         .join("");
     const upperCount = primary ? 10 : 16;
     const lowerCount = primary ? 10 : 16;
-    state.selectedPatient = odontogramPatient;
     return `<section class="card workspace-card"><div class="workspace-toolbar"><div><div class="eyebrow">${t("odontogram")}</div><h2>${odontogramPatient ? esc(odontogramPatient.name) : t("selectPatient")}</h2><div class="field odontogram-patient-picker"><label>${t("patient")}</label><select id="odontogramPatientSelect"><option value="">${t("selectPatient")}</option>${patientOptions}</select></div></div><div class="segmented"><button class="${!primary ? "active" : ""}" data-mode="permanent">${t("permanent")}</button><button class="${primary ? "active" : ""}" data-mode="primary">${t("primary")}</button></div></div><div class="odontogram-wrap ${primary ? "primary-odontogram" : ""}"><div class="arch-title">${t("maxillary")}</div><div class="teeth-row">${Array.from({ length: upperCount }, (_, i) => tooth(primary ? i + 1 : i + 1)).join("")}</div><div class="arch-title" style="margin-top:26px">${t("mandibular")}</div><div class="teeth-row">${Array.from({ length: lowerCount }, (_, i) => tooth(primary ? i + 11 : i + 17)).join("")}</div><div class="legend">${[
         ["healthy", "healthy"],
         ["decay", "decay"],

@@ -456,17 +456,17 @@ function bindAppointmentEvents() {
                         button.dataset.agendaDate
                     )
                         ? current
-                              .toISOString()
-                              .slice(
-                                  0,
-                                  10
-                              )
+                            .toISOString()
+                            .slice(
+                                0,
+                                10
+                            )
                         : button.dataset
-                              .agendaDate ===
-                          "today"
-                        ? today()
-                        : button.dataset
-                              .agendaDate;
+                            .agendaDate ===
+                            "today"
+                            ? today()
+                            : button.dataset
+                                .agendaDate;
 
                 render();
             };
@@ -969,61 +969,61 @@ function bindGlobalEvents() {
 
     const importInput = $("#importInput");
 
-if (importInput) {
-    importInput.onchange = async (event) => {
-        const file = event.target.files?.[0];
+    if (importInput) {
+        importInput.onchange = async (event) => {
+            const file = event.target.files?.[0];
 
-        if (!file) {
-            return;
-        }
-
-        try {
-            const source = await file.text();
-
-            const data =
-                parseExcelBackup(source);
-
-            validateImportedData(data);
-
-            const confirmed = confirm(
-                t("confirmWipe")
-            );
-
-            if (!confirmed) {
+            if (!file) {
                 return;
             }
 
-            await safeImport(data);
+            try {
+                const source = await file.text();
 
-            toast(t("restored"));
+                const data =
+                    parseExcelBackup(source);
 
-            state.selectedPatient = null;
-            state.treatmentPatientId = null;
-            state.treatmentPlanPatientId = null;
-            state.prescriptionPatientId = null;
+                validateImportedData(data);
 
-            await refresh(true);
+                const confirmed = confirm(
+                    t("confirmWipe")
+                );
 
-        } catch (error) {
-            console.error(
-                "Backup import failed:",
-                error
-            );
+                if (!confirmed) {
+                    return;
+                }
 
-            alert(
-                error?.message ||
-                "Invalid backup file."
-            );
+                await safeImport(data);
 
-        } finally {
-            /*
-             * Allow the same file to be
-             * selected again.
-             */
-            importInput.value = "";
-        }
-    };
-}
+                toast(t("restored"));
+
+                state.selectedPatient = null;
+                state.treatmentPatientId = null;
+                state.treatmentPlanPatientId = null;
+                state.prescriptionPatientId = null;
+
+                await refresh(true);
+
+            } catch (error) {
+                console.error(
+                    "Backup import failed:",
+                    error
+                );
+
+                alert(
+                    error?.message ||
+                    "Invalid backup file."
+                );
+
+            } finally {
+                /*
+                 * Allow the same file to be
+                 * selected again.
+                 */
+                importInput.value = "";
+            }
+        };
+    }
 
     if (
         localStorage.getItem(
@@ -1138,21 +1138,21 @@ function bindInactivityEvents() {
         "mousedown",
         "keydown",
         "touchstart",
-    ].forEach(
-        (eventName) => {
-
-            document.addEventListener(
-                eventName,
-                () => {
-
-                    if (!document.querySelector(".app-shell")?.classList.contains("app-locked")) {
-    resetInactivityTimer();
-}
-                },
-                true
-            );
-        }
-    );
+    ].forEach((eventName) => {
+        document.addEventListener(
+            eventName,
+            () => {
+                if (
+                    !document
+                        .querySelector(".app-shell")
+                        ?.classList.contains("app-locked")
+                ) {
+                    resetInactivityTimer();
+                }
+            },
+            true
+        );
+    });
 }
 
 

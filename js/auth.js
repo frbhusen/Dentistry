@@ -44,6 +44,8 @@ function unlockApp() {
 
     $("#pinInput").value = "";
     $("#pinError").textContent = "";
+
+    resetInactivityTimer();
 }
 
 function showPINSetup() {
@@ -109,6 +111,7 @@ async function savePIN() {
         pinHash,
     };
 
+    try {
     await dbPut("settings", newSettings);
 
     state.settings = newSettings;
@@ -118,6 +121,12 @@ async function savePIN() {
     unlockApp();
 
     resetInactivityTimer();
+} catch (error) {
+    console.error("Failed to save PIN:", error);
+
+    $("#pinError").textContent =
+        "Unable to save PIN. Please try again.";
+}
 }
 
 async function verifyPIN() {
@@ -160,14 +169,21 @@ let inactivityTimer = null;
 
 function resetInactivityTimer() {
     clearTimeout(inactivityTimer);
+    inactivityTimer = null;
 
     if (!state.settings.pinEnabled) {
         return;
     }
 
+    if (document.querySelector(".app-shell")?.classList.contains("app-locked")) {
+        return;
+    }
+
     inactivityTimer = setTimeout(() => {
+        inactivityTimer = null;
+
+        if (!document.querySelector(".app-shell")?.classList.contains("app-locked")) {
             lockApp();
-        },
-        10 * 60 * 1000,
-    );
+        }
+    }, 10 * 60 * 1000);
 }

@@ -22,7 +22,6 @@ async function refresh(preserveEmptySelection = false) {
   );
 
 
-  state.patients = await dbGetAll("patients");
   const savedSettings = (await dbGetAll("settings"))[0] || {};
 
   state.settings = {
@@ -30,6 +29,8 @@ async function refresh(preserveEmptySelection = false) {
     currencySymbol: "SYR",
     clinicName: "------ Dental Clinic",
     doctorName: "Dr. ------",
+    phone: "0900000000",
+    address: "",
     workStartHour: "09:00",
     workEndHour: "18:00",
     slotDuration: 30,
@@ -49,8 +50,16 @@ async function refresh(preserveEmptySelection = false) {
       null
       : state.patients[0] || null;
 
-
   state.treatments = await dbGetAll("treatments");
+
+for (const treatment of state.treatments) {
+    if (treatment.status === "Planned") {
+        treatment.status = "planned";
+
+        await dbPut("treatments", treatment);
+    }
+}
+
   render();
 }
 
@@ -70,7 +79,14 @@ function renderDashboard() {
 
 function renderSettings() {
   const s = state.settings;
-  return `<section class="content-grid"><div class="card"><div class="card-heading"><h2>${t("clinic")}</h2></div><form id="settingsForm" class="form-grid"><div class="field"><label>${t("clinic")}</label><input name="clinicName" value="${esc(s.clinicName)}"></div><div class="field"><label>${t("doctor")}</label><input name="doctorName" value="${esc(s.doctorName)}"></div><div class="field full-span"><label>${t("phone")}</label><input name="phone" value="${esc(s.phone)}"></div><div class="field full-span"><label>${t("address")}</label><input name="address" value="${esc(s.address)}"></div><div class="field">
+  const clinicName = s.clinicName || "";
+  const doctorName = s.doctorName || "";
+  const phone = s.phone || "";
+  const address = s.address || "";
+  const workStartHour = s.workStartHour || "09:00";
+  const workEndHour = s.workEndHour || "18:00";
+  const slotDuration = Number(s.slotDuration) || 30;
+  return `<section class="content-grid"><div class="card"><div class="card-heading"><h2>${t("clinic")}</h2></div><form id="settingsForm" class="form-grid"><div class="field"><label>${t("clinic")}</label><input name="clinicName" value="${esc(clinicName)}"></div><div class="field"><label>${t("doctor")}</label><input name="doctorName" value="${esc(doctorName)}"></div><div class="field full-span"><label>${t("phone")}</label><input name="phone" value="${esc(phone)}"></div><div class="field full-span"><label>${t("address")}</label><input name="address" value="${esc(address)}"></div><div class="field">
   <label>${t("currency")}</label>
   <select name="currencySymbol">
     <option
@@ -80,7 +96,7 @@ function renderSettings() {
       SYR
     </option>
   </select>
-</div><div class="field"><label>${t("slot")}</label><select name="slotDuration"><option ${String(s.slotDuration) === "15" ? "selected" : ""}>15</option><option ${String(s.slotDuration) === "30" ? "selected" : ""}>30</option><option ${String(s.slotDuration) === "60" ? "selected" : ""}>60</option></select></div><div class="field"><label>${t("start")}</label><input type="time" name="workStartHour" value="${esc(s.workStartHour)}"></div><div class="field"><label>${t("end")}</label><input type="time" name="workEndHour" value="${esc(s.workEndHour)}"></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button></div></form></div><div class="card"><div class="card-heading"><h2>${t("backup")}</h2></div><p class="muted">${t("saved")}</p><div class="form-actions" style="justify-content:flex-start"><button class="button button-primary" data-action="export">${t("export")}</button><button class="button button-ghost" data-action="import">${t("import")}</button><button class="button" style="color:var(--danger);border:1px solid #fecaca" data-action="wipe">${t("wipe")}</button></div></div></section>`;
+</div><div class="field"><label>${t("slot")}</label><select name="slotDuration"><option ${String(slotDuration) === "15" ? "selected" : ""}>15</option><option ${String(slotDuration) === "30" ? "selected" : ""}>30</option><option ${String(slotDuration) === "60" ? "selected" : ""}>60</option></select></div><div class="field"><label>${t("start")}</label><input type="time" name="workStartHour" value="${esc(workStartHour)}"></div><div class="field"><label>${t("end")}</label><input type="time" name="workEndHour" value="${esc(workEndHour)}"></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button></div></form></div><div class="card"><div class="card-heading"><h2>${t("backup")}</h2></div><p class="muted">${t("saved")}</p><div class="form-actions" style="justify-content:flex-start"><button class="button button-primary" data-action="export">${t("export")}</button><button class="button button-ghost" data-action="import">${t("import")}</button><button class="button" style="color:var(--danger);border:1px solid #fecaca" data-action="wipe">${t("wipe")}</button></div></div></section>`;
 }
 
 async function actions(action) {
@@ -135,32 +151,44 @@ function newPatient() {
 
 
 function updateClock() {
+  const clock = $("#clock");
+  const dateLabel = $("#dateLabel");
+
+  if (!clock || !dateLabel) {
+    return;
+  }
+
   const now = new Date();
 
-  const language = state.settings.currentLanguage || "ar";
+  const language =
+    state.settings?.currentLanguage || "ar";
 
-  $("#clock").textContent = now.toLocaleTimeString(
-    language === "ar" ? "ar-SA" : "en-US",
-    {
-      hour: "2-digit",
-      minute: "2-digit",
-    },
-  );
+  clock.textContent =
+    now.toLocaleTimeString(
+      language === "ar"
+        ? "ar-SA"
+        : "en-US",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    );
 
-  $("#dateLabel").textContent = now.toLocaleDateString(
-    language === "ar" ? "ar-SA" : "en-US",
-    {
-      weekday: "long",
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    },
-  );
+  dateLabel.textContent =
+    now.toLocaleDateString(
+      language === "ar"
+        ? "ar-SA"
+        : "en-US",
+      {
+        weekday: "long",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }
+    );
 }
 
 
-setInterval(updateClock, 1000);
-updateClock();
 async function startApplication() {
   try {
     await openDB();
@@ -168,15 +196,13 @@ async function startApplication() {
     await seedDatabase();
 
     await refresh();
-
-    // Only show PIN setup when a PIN has NEVER been configured.
+    updateClock();
+    setInterval(updateClock, 1000);
     if (state.settings.pinEnabled === true) {
       lockApp();
     } else {
       showPINSetup();
     }
-
-    resetInactivityTimer();
   } catch (error) {
     console.error("Application startup failed:", error);
   }
