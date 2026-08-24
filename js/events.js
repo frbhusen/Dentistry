@@ -729,14 +729,33 @@ function bindFormEvents() {
                         )
                     );
 
+                const updatedPatient = {
+                    ...state.selectedPatient,
+                    ...data,
+                };
+
                 await dbPut(
                     "patients",
-                    {
-                        ...state
-                            .selectedPatient,
-                        ...data,
-                    }
+                    updatedPatient
                 );
+
+                const patientAppointments =
+                    state.appointments.filter(
+                        (appointment) =>
+                            appointment.patientId ===
+                            updatedPatient.id
+                    );
+
+                for (const appointment of patientAppointments) {
+                    await dbPut(
+                        "appointments",
+                        {
+                            ...appointment,
+                            patientName:
+                                updatedPatient.name,
+                        }
+                    );
+                }
 
                 toast(
                     t("patientSaved")
