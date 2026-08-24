@@ -1,4 +1,3 @@
-
 function renderOdontogram() {
     const primary = state.toothMode === "primary";
     const odontogramPatient =
@@ -31,10 +30,19 @@ function renderOdontogram() {
 
 function tooth(number) {
     const primary = state.toothMode === "primary";
+
+    const odontogramPatient =
+        state.patients.find(
+            (patient) =>
+                patient.id ===
+                Number(state.odontogramPatientId),
+        ) || state.selectedPatient;
+
     const record = state.odontograms.find(
         (item) =>
-            item.patientId === state.selectedPatient?.id &&
-            item.toothNumber === number,
+            item.patientId === odontogramPatient?.id &&
+            item.toothNumber === number &&
+            item.toothMode === state.toothMode,
     );
     const condition = record?.condition || "healthy";
     const label = primary ? String.fromCharCode(64 + number) : number;
@@ -46,7 +54,8 @@ async function openTooth(number) {
     const record = state.odontograms.find(
         (item) =>
             item.patientId === state.selectedPatient?.id &&
-            item.toothNumber === number,
+            item.toothNumber === number &&
+            item.toothMode === state.toothMode,
     );
     $("#drawerTooth").textContent = `#${number}`;
     $("#drawerAnatomy").textContent =
@@ -61,12 +70,20 @@ async function openTooth(number) {
         (button) => (button.onclick = () => updateTooth(button.dataset.procedure)),
     );
 }
+
 async function updateTooth(condition) {
-    if (!state.selectedPatient) return;
+    const odontogramPatient =
+        state.patients.find(
+            (patient) =>
+                patient.id ===
+                Number(state.odontogramPatientId),
+        ) || state.selectedPatient;
+
+    if (!odontogramPatient) return;
 
     const existing = state.odontograms.find(
         (item) =>
-            item.patientId === state.selectedPatient.id &&
+            item.patientId === odontogramPatient.id &&
             item.toothNumber === state.selectedTooth,
     );
 
@@ -77,8 +94,9 @@ async function updateTooth(condition) {
     } else {
         await dbPut("odontograms", {
             ...(existing || {}),
-            patientId: state.selectedPatient.id,
+            patientId: odontogramPatient.id,
             toothNumber: state.selectedTooth,
+            toothMode: state.toothMode,
             condition,
             procedure: t(condition),
             timestamp: new Date().toISOString(),
@@ -90,17 +108,24 @@ async function updateTooth(condition) {
 }
 
 async function saveCurrentToothNote() {
-    if (!state.selectedPatient) return;
+    const odontogramPatient =
+        state.patients.find(
+            (patient) =>
+                patient.id ===
+                Number(state.odontogramPatientId),
+        ) || state.selectedPatient;
+
+    if (!odontogramPatient) return;
 
     const existing = state.odontograms.find(
         (item) =>
-            item.patientId === state.selectedPatient.id &&
+            item.patientId === odontogramPatient.id &&
             item.toothNumber === state.selectedTooth,
     );
 
     await dbPut("odontograms", {
         ...(existing || {}),
-        patientId: state.selectedPatient.id,
+        patientId: odontogramPatient.id,
         toothNumber: state.selectedTooth,
         condition: existing?.condition || "healthy",
         notes: $("#toothNote").value,

@@ -29,7 +29,7 @@ async function refresh(preserveEmptySelection = false) {
     currencySymbol: "SYR",
     clinicName: "------ Dental Clinic",
     doctorName: "Dr. ------",
-    phone: "0900000000",
+    phone: "",
     address: "",
     workStartHour: "09:00",
     workEndHour: "18:00",

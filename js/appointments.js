@@ -30,17 +30,15 @@ function renderAppointments() {
     const weekStrip = weekDates
         .map(
             (date) =>
-                `<button class="calendar-day ${
-                    date === state.agendaDate
-                        ? "active"
-                        : ""
+                `<button class="calendar-day ${date === state.agendaDate
+                    ? "active"
+                    : ""
                 }" data-agenda-date="${date}">
                     <span>${calendarDateLabel(date)}</span>
-                    <b>${
-                        state.appointments.filter(
-                            (item) => item.date === date
-                        ).length
-                    }</b>
+                    <b>${state.appointments.filter(
+                    (item) => item.date === date
+                ).length
+                }</b>
                 </button>`
         )
         .join("");
@@ -73,8 +71,8 @@ function renderAppointments() {
 
                         <b>
                             ${calendarDateLabel(
-                                state.agendaDate
-                            )}
+        state.agendaDate
+    )}
                         </b>
 
                         <button
@@ -113,9 +111,9 @@ function renderAppointments() {
             <div class="agenda">
 
                 ${times
-                    .map(
-                        (time) =>
-                            `
+            .map(
+                (time) =>
+                    `
                             <div class="agenda-row">
 
                                 <div class="agenda-time">
@@ -124,35 +122,35 @@ function renderAppointments() {
 
                                 <div>
                                     ${entries
-                                        .filter(
-                                            (item) =>
-                                                item.startTime ===
-                                                time
-                                        )
-                                        .map(
-                                            (item) =>
-                                                `
+                        .filter(
+                            (item) =>
+                                item.startTime ===
+                                time
+                        )
+                        .map(
+                            (item) =>
+                                `
                                                 <div class="appointment">
 
                                                     <div>
                                                         <b>
                                                             ${esc(
-                                                                item.patientName
-                                                            )}
+                                    item.patientName
+                                )}
                                                             ·
                                                             ${esc(
-                                                                item.procedure
-                                                            )}
+                                    item.procedure
+                                )}
                                                         </b>
 
                                                         <span>
                                                             ${esc(
-                                                                item.startTime
-                                                            )}
+                                    item.startTime
+                                )}
                                                             ·
                                                             ${t(
-                                                                item.status
-                                                            )}
+                                    item.status
+                                )}
                                                         </span>
                                                     </div>
 
@@ -160,25 +158,25 @@ function renderAppointments() {
                                                         class="appointment-delete"
                                                         data-delete-appointment="${item.id}"
                                                         title="${t(
-                                                            "deleteAppointment"
-                                                        )}"
+                                    "deleteAppointment"
+                                )}"
                                                         aria-label="${t(
-                                                            "deleteAppointment"
-                                                        )}"
+                                    "deleteAppointment"
+                                )}"
                                                     >
                                                         ×
                                                     </button>
 
                                                 </div>
                                                 `
-                                        )
-                                        .join("")}
+                        )
+                        .join("")}
                                 </div>
 
                             </div>
                             `
-                    )
-                    .join("")}
+            )
+            .join("")}
 
             </div>
 
@@ -193,12 +191,11 @@ function addAppointment() {
             (patient) =>
                 `<option
                     value="${patient.id}"
-                    ${
-                        patient.id ===
-                        state.selectedPatient?.id
-                            ? "selected"
-                            : ""
-                    }
+                    ${patient.id ===
+                    state.selectedPatient?.id
+                    ? "selected"
+                    : ""
+                }
                 >
                     ${esc(patient.name)}
                     ·
@@ -322,7 +319,32 @@ function addAppointment() {
                 Number(
                     state.settings.slotDuration
                 ) || 30;
+            const workStart =
+                timeToMinutes(
+                    state.settings.workStartHour || "09:00"
+                );
 
+            const workEnd =
+                timeToMinutes(
+                    state.settings.workEndHour || "18:00"
+                );
+
+            const appointmentStart =
+                timeToMinutes(startTime);
+
+            const appointmentEnd =
+                appointmentStart + duration;
+
+            if (
+                appointmentStart < workStart ||
+                appointmentEnd > workEnd
+            ) {
+                toast(
+                    "Appointment must be within clinic working hours."
+                );
+
+                return;
+            }
             /*
              * Calculate the new appointment
              * start and end times.
@@ -335,7 +357,7 @@ function addAppointment() {
             const newEnd =
                 new Date(
                     newStart.getTime() +
-                        duration * 60000
+                    duration * 60000
                 );
 
             /*
@@ -366,15 +388,15 @@ function addAppointment() {
                         const existingEnd =
                             new Date(
                                 existingStart.getTime() +
-                                    existingDuration *
-                                        60000
+                                existingDuration *
+                                60000
                             );
 
                         return (
                             newStart <
-                                existingEnd &&
+                            existingEnd &&
                             newEnd >
-                                existingStart
+                            existingStart
                         );
                     }
                 );
@@ -475,7 +497,7 @@ function calendarWeekDates(centerDate) {
 
             date.setDate(
                 start.getDate() +
-                    index
+                index
             );
 
             return date

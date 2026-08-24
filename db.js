@@ -128,22 +128,16 @@ function validateBackup(data) {
     return false;
   }
 
-  // A backup must contain at least one recognized store.
-  const availableStores = STORES.filter(
-    (store) => Array.isArray(data[store])
-  );
-
-  if (!availableStores.length) {
-    return false;
+  // A backup must contain every known store.
+  for (const store of STORES) {
+    if (!Array.isArray(data[store])) {
+      return false;
+    }
   }
 
-  // Every present store must contain an array.
+  // Reject unexpected top-level properties.
   for (const key of Object.keys(data)) {
     if (!STORES.includes(key)) {
-      continue;
-    }
-
-    if (!Array.isArray(data[key])) {
       return false;
     }
   }
