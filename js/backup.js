@@ -252,12 +252,28 @@ function parseExcelBackup(source) {
 
                             return;
                         }
+                        const booleanFields = [
+                            "pinEnabled",
+                        ];
+                        if (booleanFields.includes(key)) {
+                            if (value === "true") {
+                                item[key] = true;
+                                return;
+                            }
 
+                            if (value === "false") {
+                                item[key] = false;
+                                return;
+                            }
+
+                            throw new Error(
+                                `Invalid boolean in ${store}.${key}`
+                            );
+                        }
                         const jsonFields = [
                             "items",
                             "medications",
                         ];
-
                         if (
                             jsonFields.includes(
                                 key
