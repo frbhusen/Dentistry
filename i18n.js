@@ -93,14 +93,14 @@ const I18N = {
     demoPatient: "Test Patient",
     demoAlert: "Penicillin allergy · Hypertension",
     patientSaved: "Patient saved",
-    confirmWipe:
-      "This permanently deletes all local records. Type WIPE to confirm.",
+    confirmWipe: "This permanently deletes all local records. Type WIPE to confirm.",
     restored: "Backup restored",
     exported: "Backup exported",
     lockTitle: "AeroDent",
     lockMessage: "Enter your PIN to continue",
     unlockBtn: "Unlock",
     xrayType: "X-ray type",
+    xrayName: "X-ray name",
     toothNumber: "Tooth number",
     clinicalNotes: "Clinical notes",
     periapical: "Periapical",
@@ -136,6 +136,7 @@ const I18N = {
     treatment: "Treatment",
     reset: "Reset",
     download: "Download",
+    unableProcessXray: "Unable to process the X-ray image.",
   },
   ar: {
     appName: "AeroDent",
@@ -238,6 +239,7 @@ const I18N = {
     restored: "تم استرجاع النسخة",
     exported: "تم تصدير النسخة",
     xrayType: "نوع الأشعة",
+    xrayName: "اسم الأشعة",
     toothNumber: "رقم السن",
     clinicalNotes: "ملاحظات سريرية",
     periapical: "حول ذروية",
@@ -274,6 +276,7 @@ const I18N = {
     treatment: "علاج",
     reset: "إعادة ضبط",
     download: "تنزيل",
+    unableProcessXray: "تعذر معالجة صورة الأشعة.",
   },
 };
 I18N.en.export = "Export Excel";

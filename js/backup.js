@@ -61,7 +61,7 @@ async function exportData() {
         .join("");
 
     const workbook = `
-        <!doctype html><html><head><meta charset="utf-8"><meta name="mizan-export" content="1"><style>
+        <!doctype html><html><head><meta charset="utf-8"><meta name="aerodent-export" content="1"><style>
                 body {
                     font-family: Arial;
                 }
@@ -91,7 +91,7 @@ async function exportData() {
         </head>
 
         <body>
-            <h1>Mizan Dental Export</h1>
+            <h1>AeroDent Export</h1>
             ${sheets}
         </body>
         </html>
@@ -111,7 +111,7 @@ async function exportData() {
         URL.createObjectURL(blob);
 
     link.download =
-        `mizan-dental-export-${new Date()
+        `aerodent-export-${new Date()
             .toISOString()
             .replace(/[:.]/g, "-")}.xls`;
 
@@ -150,12 +150,12 @@ function parseExcelBackup(source) {
 
     const marker =
         document.querySelector(
-            'meta[name="mizan-export"]'
+            'meta[name="aerodent-export"]'
         );
 
     if (!marker) {
         throw new Error(
-            "This file is not a valid Mizan Dental backup."
+            "This file is not a valid AeroDent backup."
         );
     }
 

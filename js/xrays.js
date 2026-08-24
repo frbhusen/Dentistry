@@ -158,7 +158,7 @@ function renderXrays() {
                         }
 
                                                     <span>
-                                                        ${esc(item.date)}
+                                                        ${formatXrayTimestamp(item)}
                                                     </span>
 
                                                 </div>
@@ -204,6 +204,128 @@ function renderXrays() {
         </section>
     `;
 }
+
+function formatXrayTimestamp(xray) {
+    return [xray.date, xray.time]
+        .filter(Boolean)
+        .map((value) => esc(value))
+        .join(" · ");
+}
+
+function editXray(xrayId) {
+    const xray = state.xrays.find((item) => item.id === xrayId);
+
+    if (!xray) {
+        return;
+    }
+
+    modal(
+        t("edit"),
+        `
+        <form id="xrayEditForm" class="form-grid">
+            <div class="field full-span">
+                <label>${t("xrayName")}</label>
+                <input
+                    name="filename"
+                    value='${esc(xray.filename || "")}'
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>${t("date")}</label>
+                <input
+                    type="date"
+                    name="date"
+                    value="${esc(xray.date || today())}"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>${t("xrayType")}</label>
+                <select name="type">
+                    <option
+                        value="periapical"
+                        ${xray.type === "periapical" ? "selected" : ""}
+                    >
+                        ${t("periapical")}
+                    </option>
+                    <option
+                        value="bitewing"
+                        ${xray.type === "bitewing" ? "selected" : ""}
+                    >
+                        ${t("bitewing")}
+                    </option>
+                    <option
+                        value="panoramic"
+                        ${xray.type === "panoramic" ? "selected" : ""}
+                    >
+                        ${t("panoramic")}
+                    </option>
+                    <option
+                        value="cephalometric"
+                        ${xray.type === "cephalometric" ? "selected" : ""}
+                    >
+                        ${t("cephalometric")}
+                    </option>
+                    <option
+                        value="cbct"
+                        ${xray.type === "cbct" ? "selected" : ""}
+                    >
+                        ${t("cbct")}
+                    </option>
+                    <option
+                        value="other"
+                        ${!xray.type || xray.type === "other" ? "selected" : ""}
+                    >
+                        ${t("other")}
+                    </option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>${t("time")}</label>
+                <input
+                    type="time"
+                    name="time"
+                    value='${esc(xray.time || "")}'
+                >
+            </div>
+
+            <div class="form-actions full-span">
+                <button type="button" class="button button-ghost" id="cancelXrayEdit">
+                    ${t("cancel")}
+                </button>
+
+                <button class="button button-primary">
+                    ${t("save")}
+                </button>
+            </div>
+        </form>
+        `,
+    );
+
+    $("#cancelXrayEdit").onclick = () => openXrayViewer(xrayId);
+
+    $("#xrayEditForm").onsubmit = async (event) => {
+        event.preventDefault();
+
+        const data = Object.fromEntries(new FormData(event.target));
+
+        await dbPut("xrays", {
+            ...xray,
+            filename: data.filename.trim(),
+            date: data.date,
+            type: data.type || "other",
+            time: data.time,
+        });
+
+        await refresh();
+        openXrayViewer(xrayId);
+    };
+}
+
 function openXrayViewer(xrayId) {
     const xray = state.xrays.find((item) => item.id === xrayId);
 
@@ -235,12 +357,20 @@ function openXrayViewer(xrayId) {
         }
 
                     <span class="muted">
-                        ${esc(xray.date || "")}
+                        ${formatXrayTimestamp(xray)}
                     </span>
 
                 </div>
 
                 <div class="xray-viewer-actions">
+
+                    <button
+                        type="button"
+                        class="button button-ghost"
+                        id="xrayEdit"
+                    >
+                        ${t("edit")}
+                    </button>
 
                     <button
                         type="button"
@@ -301,7 +431,8 @@ function openXrayViewer(xrayId) {
                 <img
                     id="xrayViewerImage"
                     src="${xray.base64Data}"
-                    alt="${esc(xray.filename || "X-ray")}"
+                    alt='${esc(xray.filename || "X-ray")}'
+                    draggable="false"
                 >
 
             </div>
@@ -326,39 +457,128 @@ function openXrayViewer(xrayId) {
     );
 
     const image = $("#xrayViewerImage");
+    const stage = $("#xrayViewerStage");
     const download = $("#xrayDownload");
     const zoomLabel = $("#xrayZoomLabel");
 
-    if (!image || !download || !zoomLabel) {
+    if (!image || !stage || !download || !zoomLabel) {
         return;
     }
 
     let zoom = 1;
     let rotation = 0;
+    let panX = 0;
+    let panY = 0;
+    let isPanning = false;
+    let activePointerId = null;
+    let panStartX = 0;
+    let panStartY = 0;
 
     download.href = xray.base64Data;
 
-    function updateViewer() {
-        image.style.transform = `scale(${zoom}) rotate(${rotation}deg)`;
+    function constrainPan() {
+        const angle = (rotation * Math.PI) / 180;
+        const cosine = Math.abs(Math.cos(angle));
+        const sine = Math.abs(Math.sin(angle));
+        const rotatedWidth =
+            (image.offsetWidth * cosine + image.offsetHeight * sine) * zoom;
+        const rotatedHeight =
+            (image.offsetWidth * sine + image.offsetHeight * cosine) * zoom;
+        const maxPanX = Math.max(0, (rotatedWidth - stage.clientWidth) / 2);
+        const maxPanY = Math.max(0, (rotatedHeight - stage.clientHeight) / 2);
 
-        zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+        panX = Math.max(-maxPanX, Math.min(maxPanX, panX));
+        panY = Math.max(-maxPanY, Math.min(maxPanY, panY));
     }
 
-    $("#xrayZoomIn").onclick = () => {
-        zoom = Math.min(4, zoom + 0.25);
+    function updateViewer() {
+        if (zoom <= 1) {
+            panX = 0;
+            panY = 0;
+        } else {
+            constrainPan();
+        }
+
+        image.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom}) rotate(${rotation}deg)`;
+
+        zoomLabel.textContent = `${Math.round(zoom * 100)}%`;
+
+        stage.classList.toggle("is-pannable", zoom > 1);
+    }
+
+    function setZoom(nextZoom) {
+        zoom = Math.max(0.5, Math.min(4, nextZoom));
 
         updateViewer();
+    }
+
+    function stopPanning() {
+        if (activePointerId !== null && stage.hasPointerCapture(activePointerId)) {
+            stage.releasePointerCapture(activePointerId);
+        }
+
+        isPanning = false;
+        activePointerId = null;
+        stage.classList.remove("is-panning");
+    }
+
+    stage.addEventListener("pointerdown", (event) => {
+        if (zoom <= 1 || event.button !== 0) {
+            return;
+        }
+
+        isPanning = true;
+        activePointerId = event.pointerId;
+        panStartX = event.clientX - panX;
+        panStartY = event.clientY - panY;
+
+        stage.setPointerCapture(event.pointerId);
+        stage.classList.add("is-panning");
+        event.preventDefault();
+    });
+
+    stage.addEventListener("pointermove", (event) => {
+        if (!isPanning || event.pointerId !== activePointerId) {
+            return;
+        }
+
+        panX = event.clientX - panStartX;
+        panY = event.clientY - panStartY;
+
+        updateViewer();
+    });
+
+    stage.addEventListener("pointerup", stopPanning);
+    stage.addEventListener("pointercancel", stopPanning);
+    stage.addEventListener("lostpointercapture", stopPanning);
+
+    stage.addEventListener(
+        "wheel",
+        (event) => {
+            event.preventDefault();
+
+            if (event.deltaY === 0) {
+                return;
+            }
+
+            setZoom(zoom + (event.deltaY < 0 ? 0.25 : -0.25));
+        },
+        { passive: false },
+    );
+
+    $("#xrayZoomIn").onclick = () => {
+        setZoom(zoom + 0.25);
     };
 
     $("#xrayZoomOut").onclick = () => {
-        zoom = Math.max(0.5, zoom - 0.25);
-
-        updateViewer();
+        setZoom(zoom - 0.25);
     };
 
     $("#xrayReset").onclick = () => {
         zoom = 1;
         rotation = 0;
+        panX = 0;
+        panY = 0;
 
         updateViewer();
     };
@@ -368,6 +588,8 @@ function openXrayViewer(xrayId) {
 
         updateViewer();
     };
+
+    $("#xrayEdit").onclick = () => editXray(xrayId);
 
     updateViewer();
 }

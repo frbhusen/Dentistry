@@ -495,8 +495,8 @@ function bindXrayEvents() {
 
     $$("[data-delete-xray]").forEach(
         (button) => {
-            button.onclick = async () => {
-
+            button.onclick = async (event) => {
+                event.stopPropagation();
                 const xrayId =
                     Number(
                         button.dataset
@@ -641,6 +641,11 @@ function bindXrayEvents() {
 
                             date:
                                 today(),
+
+                            time:
+                                new Date()
+                                    .toTimeString()
+                                    .slice(0, 5),
 
                             notes:
                                 notes,
@@ -1022,7 +1027,7 @@ if (importInput) {
 
     if (
         localStorage.getItem(
-            "mizan-sidebar-collapsed"
+            "aerodent-sidebar-collapsed"
         ) === "true"
     ) {
         document.body.classList.add(
@@ -1039,7 +1044,7 @@ if (importInput) {
                 );
 
             localStorage.setItem(
-                "mizan-sidebar-collapsed",
+                "aerodent-sidebar-collapsed",
                 String(collapsed)
             );
 

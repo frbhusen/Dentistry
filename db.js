@@ -1,4 +1,4 @@
-const DB_NAME = "mizan-dental-db";
+const DB_NAME = "aerodent-db";
 
 const DB_VERSION = 2;
 

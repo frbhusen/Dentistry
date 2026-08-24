@@ -37,11 +37,11 @@ async function getPatientBackup(patientId) {
         "odontograms",
         "appointments",
         "treatments",
+        "treatmentPlans",
         "invoices",
         "prescriptions",
         "xrays",
     ];
-
     const backup = {
         patient: await dbGet("patients", patientId),
 

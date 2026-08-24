@@ -1856,7 +1856,7 @@ textarea {
   align-items: center;
   justify-content: center;
 
-  overflow: auto;
+  overflow: hidden;
 
   padding: 20px;
 
@@ -1876,6 +1876,21 @@ textarea {
   transform-origin: center center;
 
   transition: transform 0.2s ease;
+
+  user-select: none;
+}
+
+.xray-viewer-stage.is-pannable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.xray-viewer-stage.is-panning {
+  cursor: grabbing;
+}
+
+.xray-viewer-stage.is-panning img {
+  transition: none;
 }
 
 .xray-viewer-notes {

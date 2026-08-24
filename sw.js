@@ -1,12 +1,26 @@
-const CACHE = "mizan-dental-v2";
+const CACHE = "aerodent-v3";
 const ASSETS = [
   "./",
   "./index.html",
   "./styles.css",
+  "./manifest.json",
   "./i18n.js",
   "./db.js",
-  "./app.js",
-  "./manifest.json",
+  "./js/state.js",
+  "./js/core.js",
+  "./js/ui.js",
+  "./js/auth.js",
+  "./js/patients.js",
+  "./js/odontogram.js",
+  "./js/treatments.js",
+  "./js/treatmentPlans.js",
+  "./js/appointments.js",
+  "./js/prescriptions.js",
+  "./js/xrays.js",
+  "./js/timeline.js",
+  "./js/backup.js",
+  "./js/events.js",
+  "./js/app.js",
 ];
 self.addEventListener("install", (event) =>
   event.waitUntil(

@@ -74,7 +74,7 @@ function renderPatientTimeline(patientId) {
                 type: "xray",
                 id: item.id,
                 date: item.date || "",
-                time: "",
+                time: item.time || "",
                 title: item.filename || t("xrays"),
                 description: `${t(item.type || "other")}${item.toothTag ? ` · ${t("toothNumber")} #${item.toothTag}` : ""
                     }`,
