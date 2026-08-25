@@ -21,7 +21,6 @@ async function refresh(preserveEmptySelection = false) {
     ].map(dbGetAll),
   );
 
-
   const savedSettings = (await dbGetAll("settings"))[0] || {};
 
   state.settings = {
@@ -44,15 +43,13 @@ async function refresh(preserveEmptySelection = false) {
     ? null
     : state.selectedPatient
       ? state.patients.find(
-        (patient) => patient.id === state.selectedPatient.id,
-      ) ||
-      state.patients[0] ||
-      null
+          (patient) => patient.id === state.selectedPatient.id,
+        ) ||
+        state.patients[0] ||
+        null
       : state.patients[0] || null;
 
-  const patientIds = new Set(
-    state.patients.map((patient) => patient.id)
-  );
+  const patientIds = new Set(state.patients.map((patient) => patient.id));
 
   if (
     state.odontogramPatientId !== null &&
@@ -86,7 +83,6 @@ async function refresh(preserveEmptySelection = false) {
 
   render();
 }
-
 function renderDashboard() {
   const upcoming = state.appointments
     .filter((item) => item.date >= today())
@@ -98,6 +94,7 @@ function renderDashboard() {
     (sum, item) => sum + Number(item.balance || 0),
     0,
   );
+  
   return `<div class="stats-grid"><div class="stat"><div class="stat-icon">♙</div><div><div class="stat-label">${t("activePatients")}</div><div class="stat-value">${state.patients.length}</div></div></div><div class="stat"><div class="stat-icon">◷</div><div><div class="stat-label">${t("upcoming")}</div><div class="stat-value">${upcoming.length}</div></div></div><div class="stat"><div class="stat-icon">₿</div><div><div class="stat-label">${t("outstanding")}</div><div class="stat-value">${money(owed)}</div></div></div></div><div class="content-grid"><section class="card"><div class="card-heading"><h2>${t("upcoming")}</h2><button class="button button-primary" data-action="addAppointment">＋ ${t("addAppointment")}</button></div>${upcoming.length ? upcoming.map((item) => `<div class="appointment dashboard-appointment"><div><b>${esc(item.patientName)}</b><small>${esc(item.procedure || "Clinical visit")} · ${esc(item.startTime)} · ${t(item.status)}</small></div><button class="appointment-delete" data-delete-appointment="${item.id}" title="${t("deleteAppointment")}" aria-label="${t("deleteAppointment")}">×</button></div>`).join("") : `<p class="muted">${t("noVisits")}</p>`}</section><section class="card"><div class="card-heading"><h2>${t("patients")}</h2><button class="button button-ghost" data-view="patients">${t("add")}</button></div>${state.patients.slice(0, 5).map(patientRow).join("")}</section></div>`;
 }
 
@@ -172,8 +169,6 @@ function newPatient() {
   };
 }
 
-
-
 function updateClock() {
   const clock = $("#clock");
   const dateLabel = $("#dateLabel");
@@ -184,34 +179,26 @@ function updateClock() {
 
   const now = new Date();
 
-  const language =
-    state.settings?.currentLanguage || "ar";
+  const language = state.settings?.currentLanguage || "ar";
 
-  clock.textContent =
-    now.toLocaleTimeString(
-      language === "ar"
-        ? "ar-SA"
-        : "en-US",
-      {
-        hour: "2-digit",
-        minute: "2-digit",
-      }
-    );
+  clock.textContent = now.toLocaleTimeString(
+    language === "ar" ? "ar-SA" : "en-US",
+    {
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
 
-  dateLabel.textContent =
-    now.toLocaleDateString(
-      language === "ar"
-        ? "ar-SA"
-        : "en-US",
-      {
-        weekday: "long",
-        month: "short",
-        day: "numeric",
-        year: "numeric",
-      }
-    );
+  dateLabel.textContent = now.toLocaleDateString(
+    language === "ar" ? "ar-SA" : "en-US",
+    {
+      weekday: "long",
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    },
+  );
 }
-
 
 async function startApplication() {
   try {

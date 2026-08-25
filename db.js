@@ -3,378 +3,326 @@ const DB_NAME = "aerodent-db";
 const DB_VERSION = 3;
 
 const STORES = [
-  "patients",
-  "odontograms",
-  "appointments",
-  "treatments",
-  "treatmentPlans",
-  "invoices",
-  "prescriptions",
-  "xrays",
-  "settings",
+	"patients",
+	"odontograms",
+	"appointments",
+	"treatments",
+	"treatmentPlans",
+	"invoices",
+	"prescriptions",
+	"xrays",
+	"settings",
 ];
 
 let database;
 function openDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
-    request.onupgradeneeded = () => {
-      const db = request.result;
+	return new Promise((resolve, reject) => {
+		const request = indexedDB.open(DB_NAME, DB_VERSION);
+		request.onupgradeneeded = () => {
+			const db = request.result;
 
-      STORES.forEach((store) => {
-        let objectStore;
+			STORES.forEach((store) => {
+				let objectStore;
 
-        if (!db.objectStoreNames.contains(store)) {
-          objectStore = db.createObjectStore(store, {
-            keyPath: "id",
-            autoIncrement: true,
-          });
-        } else {
-          objectStore = request.transaction.objectStore(store);
-        }
+				if (!db.objectStoreNames.contains(store)) {
+					objectStore = db.createObjectStore(store, {
+						keyPath: "id",
+						autoIncrement: true,
+					});
+				} else {
+					objectStore = request.transaction.objectStore(store);
+				}
 
-        if (
-          store !== "settings" &&
-          !objectStore.indexNames.contains("patientId")
-        ) {
-          objectStore.createIndex(
-            "patientId",
-            "patientId"
-          );
-        }
-      });
-    };
-    request.onsuccess = () => {
-      database = request.result;
-      resolve(database);
-    };
-    request.onerror = () => reject(request.error);
-  });
+				if (
+					store !== "settings" &&
+					!objectStore.indexNames.contains("patientId")
+				) {
+					objectStore.createIndex("patientId", "patientId");
+				}
+			});
+		};
+		request.onsuccess = () => {
+			database = request.result;
+			resolve(database);
+		};
+		request.onerror = () => reject(request.error);
+	});
 }
 async function dbReady() {
-  return database || openDB();
+	return database || openDB();
 }
 async function dbGetAll(store) {
-  const db = await dbReady();
-  return new Promise((resolve, reject) => {
-    const req = db.transaction(store, "readonly").objectStore(store).getAll();
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+	const db = await dbReady();
+	return new Promise((resolve, reject) => {
+		const req = db.transaction(store, "readonly").objectStore(store).getAll();
+		req.onsuccess = () => resolve(req.result);
+		req.onerror = () => reject(req.error);
+	});
 }
 async function dbGet(store, id) {
-  const db = await dbReady();
-  return new Promise((resolve, reject) => {
-    const req = db.transaction(store, "readonly").objectStore(store).get(id);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+	const db = await dbReady();
+	return new Promise((resolve, reject) => {
+		const req = db.transaction(store, "readonly").objectStore(store).get(id);
+		req.onsuccess = () => resolve(req.result);
+		req.onerror = () => reject(req.error);
+	});
 }
 async function dbPut(store, value) {
-  const db = await dbReady();
-  return new Promise((resolve, reject) => {
-    const req = db
-      .transaction(store, "readwrite")
-      .objectStore(store)
-      .put(value);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+	const db = await dbReady();
+	return new Promise((resolve, reject) => {
+		const req = db
+			.transaction(store, "readwrite")
+			.objectStore(store)
+			.put(value);
+		req.onsuccess = () => resolve(req.result);
+		req.onerror = () => reject(req.error);
+	});
 }
 async function dbDelete(store, id) {
-  const db = await dbReady();
-  return new Promise((resolve, reject) => {
-    const req = db
-      .transaction(store, "readwrite")
-      .objectStore(store)
-      .delete(id);
-    req.onsuccess = resolve;
-    req.onerror = () => reject(req.error);
-  });
+	const db = await dbReady();
+	return new Promise((resolve, reject) => {
+		const req = db
+			.transaction(store, "readwrite")
+			.objectStore(store)
+			.delete(id);
+		req.onsuccess = resolve;
+		req.onerror = () => reject(req.error);
+	});
 }
 async function dbDeletePatient(patientId) {
-  const db = await dbReady();
+	const db = await dbReady();
 
-  const patient = await dbGet(
-    "patients",
-    patientId
-  );
+	const patient = await dbGet("patients", patientId);
 
-  if (!patient) {
-    throw new Error(
-      "Patient not found."
-    );
-  }
-  const relatedStores = [
-    "odontograms",
-    "appointments",
-    "treatments",
-    "treatmentPlans",
-    "invoices",
-    "prescriptions",
-    "xrays",
-  ];
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(
-      ["patients", ...relatedStores],
-      "readwrite",
-    );
-    const removeRelated = (store) => {
-      const objectStore = transaction.objectStore(store);
-      const request = objectStore.index("patientId").getAllKeys(patientId);
-      request.onsuccess = () =>
-        request.result.forEach((id) => objectStore.delete(id));
-      request.onerror = () => transaction.abort();
-    };
-    relatedStores.forEach(removeRelated);
-    transaction.objectStore("patients").delete(patientId);
-    transaction.oncomplete = resolve;
-    transaction.onerror = () => reject(transaction.error);
-    transaction.onabort = () =>
-      reject(transaction.error || new Error("Patient deletion aborted"));
-  });
+	if (!patient) {
+		throw new Error("Patient not found.");
+	}
+	const relatedStores = [
+		"odontograms",
+		"appointments",
+		"treatments",
+		"treatmentPlans",
+		"invoices",
+		"prescriptions",
+		"xrays",
+	];
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction(
+			["patients", ...relatedStores],
+			"readwrite",
+		);
+		const removeRelated = (store) => {
+			const objectStore = transaction.objectStore(store);
+			const request = objectStore.index("patientId").getAllKeys(patientId);
+			request.onsuccess = () =>
+				request.result.forEach((id) => objectStore.delete(id));
+			request.onerror = () => transaction.abort();
+		};
+		relatedStores.forEach(removeRelated);
+		transaction.objectStore("patients").delete(patientId);
+		transaction.oncomplete = resolve;
+		transaction.onerror = () => reject(transaction.error);
+		transaction.onabort = () =>
+			reject(transaction.error || new Error("Patient deletion aborted"));
+	});
 }
 async function dbClear(store) {
-  const db = await dbReady();
-  return new Promise((resolve, reject) => {
-    const req = db.transaction(store, "readwrite").objectStore(store).clear();
-    req.onsuccess = resolve;
-    req.onerror = () => reject(req.error);
-  });
+	const db = await dbReady();
+	return new Promise((resolve, reject) => {
+		const req = db.transaction(store, "readwrite").objectStore(store).clear();
+		req.onsuccess = resolve;
+		req.onerror = () => reject(req.error);
+	});
 }
 async function dbExport() {
-  const data = {};
-  for (const store of STORES) data[store] = await dbGetAll(store);
-  return data;
+	const data = {};
+	for (const store of STORES) data[store] = await dbGetAll(store);
+	return data;
 }
 
 function validateBackup(data) {
-  if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return false;
-  }
+	if (!data || typeof data !== "object" || Array.isArray(data)) {
+		return false;
+	}
 
-  // A backup must contain every known store.
-  for (const store of STORES) {
-    if (!Array.isArray(data[store])) {
-      return false;
-    }
-  }
+	// A backup must contain every known store.
+	for (const store of STORES) {
+		if (!Array.isArray(data[store])) {
+			return false;
+		}
+	}
 
-  // Reject unexpected top-level properties.
-  for (const key of Object.keys(data)) {
-    if (!STORES.includes(key)) {
-      return false;
-    }
-  }
+	// Reject unexpected top-level properties.
+	for (const key of Object.keys(data)) {
+		if (!STORES.includes(key)) {
+			return false;
+		}
+	}
 
-  return true;
+	return true;
 }
-
 
 function validateImportedData(data) {
-  if (!validateBackup(data)) {
-    throw new Error("Invalid backup structure.");
-  }
+	if (!validateBackup(data)) {
+		throw new Error("Invalid backup structure.");
+	}
 
-  // Check IDs.
-  for (const store of STORES) {
-    const rows = Array.isArray(data[store])
-      ? data[store]
-      : [];
+	// Check IDs.
+	for (const store of STORES) {
+		const rows = Array.isArray(data[store]) ? data[store] : [];
 
-    for (const item of rows) {
-      if (!item || typeof item !== "object" || Array.isArray(item)) {
-        throw new Error(
-          `Invalid record found in ${store}.`
-        );
-      }
+		for (const item of rows) {
+			if (!item || typeof item !== "object" || Array.isArray(item)) {
+				throw new Error(`Invalid record found in ${store}.`);
+			}
 
-      if (
-        item.id !== undefined &&
-        item.id !== null &&
-        item.id !== "" &&
-        !Number.isFinite(Number(item.id))
-      ) {
-        throw new Error(
-          `Invalid ID found in ${store}.`
-        );
-      }
-    }
-  }
+			if (
+				item.id !== undefined &&
+				item.id !== null &&
+				item.id !== "" &&
+				!Number.isFinite(Number(item.id))
+			) {
+				throw new Error(`Invalid ID found in ${store}.`);
+			}
+		}
+	}
 
-  // Patient IDs must be unique.
-  const patientIds = new Set();
+	// Patient IDs must be unique.
+	const patientIds = new Set();
 
-  for (const patient of data.patients || []) {
-    if (patient.id === undefined || patient.id === null) {
-      continue;
-    }
+	for (const patient of data.patients || []) {
+		if (patient.id === undefined || patient.id === null) {
+			continue;
+		}
 
-    const id = Number(patient.id);
+		const id = Number(patient.id);
 
-    if (patientIds.has(id)) {
-      throw new Error(
-        `Duplicate patient ID found: ${id}`
-      );
-    }
+		if (patientIds.has(id)) {
+			throw new Error(`Duplicate patient ID found: ${id}`);
+		}
 
-    patientIds.add(id);
-  }
-  const patientLinkedStores = [
-    "odontograms",
-    "appointments",
-    "treatments",
-    "treatmentPlans",
-    "invoices",
-    "prescriptions",
-    "xrays",
-  ];
+		patientIds.add(id);
+	}
+	const patientLinkedStores = [
+		"odontograms",
+		"appointments",
+		"treatments",
+		"treatmentPlans",
+		"invoices",
+		"prescriptions",
+		"xrays",
+	];
 
-  for (const store of patientLinkedStores) {
-    for (const record of data[store] || []) {
-      if (
-        record.patientId === undefined ||
-        record.patientId === null ||
-        record.patientId === ""
-      ) {
-        throw new Error(
-          `Missing patient ID in ${store}.`
-        );
-      }
+	for (const store of patientLinkedStores) {
+		for (const record of data[store] || []) {
+			if (
+				record.patientId === undefined ||
+				record.patientId === null ||
+				record.patientId === ""
+			) {
+				throw new Error(`Missing patient ID in ${store}.`);
+			}
 
-      const patientId = Number(record.patientId);
+			const patientId = Number(record.patientId);
 
-      if (!patientIds.has(patientId)) {
-        throw new Error(
-          `Invalid patient ID ${patientId} found in ${store}.`
-        );
-      }
-    }
-  }
-  return true;
+			if (!patientIds.has(patientId)) {
+				throw new Error(`Invalid patient ID ${patientId} found in ${store}.`);
+			}
+		}
+	}
+	return true;
 }
-
 
 function normalizeImportedData(data) {
-  const normalized = {};
+	const normalized = {};
 
-  for (const store of STORES) {
-    normalized[store] = Array.isArray(data[store])
-      ? data[store].map((item) => ({ ...item }))
-      : [];
-  }
+	for (const store of STORES) {
+		normalized[store] = Array.isArray(data[store])
+			? data[store].map((item) => ({ ...item }))
+			: [];
+	}
 
-  return normalized;
+	return normalized;
 }
-
 
 async function dbImport(data) {
-  validateImportedData(data);
+	validateImportedData(data);
 
-  const normalized = normalizeImportedData(data);
+	const normalized = normalizeImportedData(data);
 
-  // Clear existing data first.
-  for (const store of STORES) {
-    await dbClear(store);
-  }
+	// Clear existing data first.
+	for (const store of STORES) {
+		await dbClear(store);
+	}
 
-  // Restore every known store.
-  for (const store of STORES) {
-    for (const item of normalized[store]) {
-      await dbPut(store, item);
-    }
-  }
+	// Restore every known store.
+	for (const store of STORES) {
+		for (const item of normalized[store]) {
+			await dbPut(store, item);
+		}
+	}
 }
-
 
 function verifyImportedData(original, imported) {
-  for (const store of STORES) {
-    const originalRows =
-      Array.isArray(original[store])
-        ? original[store]
-        : [];
+	for (const store of STORES) {
+		const originalRows = Array.isArray(original[store]) ? original[store] : [];
 
-    const importedRows =
-      Array.isArray(imported[store])
-        ? imported[store]
-        : [];
+		const importedRows = Array.isArray(imported[store]) ? imported[store] : [];
 
-    if (
-      originalRows.length !==
-      importedRows.length
-    ) {
-      console.error(
-        `Import verification failed for ${store}:`,
-        originalRows.length,
-        importedRows.length
-      );
+		if (originalRows.length !== importedRows.length) {
+			console.error(
+				`Import verification failed for ${store}:`,
+				originalRows.length,
+				importedRows.length,
+			);
 
-      return false;
-    }
+			return false;
+		}
 
-    for (
-      let index = 0;
-      index < originalRows.length;
-      index++
-    ) {
-      const originalRow =
-        originalRows[index];
+		for (let index = 0; index < originalRows.length; index++) {
+			const originalRow = originalRows[index];
 
-      const importedRow =
-        importedRows[index];
+			const importedRow = importedRows[index];
 
-      if (
-        JSON.stringify(
-          originalRow
-        ) !==
-        JSON.stringify(
-          importedRow
-        )
-      ) {
-        console.error(
-          `Import verification failed for ${store} record ${index}`
-        );
+			if (JSON.stringify(originalRow) !== JSON.stringify(importedRow)) {
+				console.error(
+					`Import verification failed for ${store} record ${index}`,
+				);
 
-        return false;
-      }
-    }
-  }
+				return false;
+			}
+		}
+	}
 
-  return true;
+	return true;
 }
 
-
 async function safeImport(data) {
-  const previousData = await dbExport();
+	const previousData = await dbExport();
 
-  try {
-    validateImportedData(data);
+	try {
+		validateImportedData(data);
 
-    await dbImport(data);
+		await dbImport(data);
 
-    const importedData = await dbExport();
+		const importedData = await dbExport();
 
-    if (!verifyImportedData(data, importedData)) {
-      throw new Error(
-        "Imported data could not be verified."
-      );
-    }
+		if (!verifyImportedData(data, importedData)) {
+			throw new Error("Imported data could not be verified.");
+		}
 
-    return true;
-  } catch (error) {
-    console.error("Import failed:", error);
+		return true;
+	} catch (error) {
+		console.error("Import failed:", error);
 
-    try {
-      await dbImport(previousData);
-    } catch (restoreError) {
-      console.error(
-        "Failed to restore previous database:",
-        restoreError
-      );
-    }
+		try {
+			await dbImport(previousData);
+		} catch (restoreError) {
+			console.error("Failed to restore previous database:", restoreError);
+		}
 
-    throw error;
-  }
+		throw error;
+	}
 }
 
 /* Demo patient 
@@ -422,5 +370,5 @@ async function seedDatabase() {
 }
 */
 async function seedDatabase() {
-  //No Demo
+	//No Demo
 }

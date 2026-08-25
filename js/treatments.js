@@ -150,10 +150,7 @@ function addTreatment() {
 }
 
 function editTreatment(id) {
-    const treatment =
-        state.treatments.find(
-            (item) => item.id === id
-        );
+    const treatment = state.treatments.find((item) => item.id === id);
 
     if (!treatment) {
         return;
@@ -205,48 +202,29 @@ function editTreatment(id) {
             </div>
 
         </form>
-        `
+        `,
     );
 
-    $("#editTreatmentForm").onsubmit =
-        async (event) => {
-            event.preventDefault();
+    $("#editTreatmentForm").onsubmit = async (event) => {
+        event.preventDefault();
 
-            const data =
-                Object.fromEntries(
-                    new FormData(event.target)
-                );
+        const data = Object.fromEntries(new FormData(event.target));
 
-            await dbPut(
-                "treatments",
-                {
-                    ...treatment,
-                    toothNumber:
-                        Number(
-                            data.toothNumber
-                        ) || null,
-                    description:
-                        data.description,
-                    fee:
-                        Number(
-                            data.fee
-                        ) || 0,
-                }
-            );
+        await dbPut("treatments", {
+            ...treatment,
+            toothNumber: Number(data.toothNumber) || null,
+            description: data.description,
+            fee: Number(data.fee) || 0,
+        });
 
-            $("#modal")
-                .classList
-                .remove("show");
+        $("#modal").classList.remove("show");
 
-            await refresh();
-        };
+        await refresh();
+    };
 }
 
 async function deleteTreatment(id) {
-    const treatment =
-        state.treatments.find(
-            (item) => item.id === id
-        );
+    const treatment = state.treatments.find((item) => item.id === id);
 
     if (!treatment) {
         return;
@@ -256,22 +234,13 @@ async function deleteTreatment(id) {
         return;
     }
 
-    await dbDelete(
-        "treatments",
-        id
-    );
+    await dbDelete("treatments", id);
 
     await refresh();
 
-    showUndo(
-        t("treatmentDeleted"),
-        async () => {
-            await dbPut(
-                "treatments",
-                treatment
-            );
+    showUndo(t("treatmentDeleted"), async () => {
+        await dbPut("treatments", treatment);
 
-            await refresh();
-        }
-    );
+        await refresh();
+    });
 }
