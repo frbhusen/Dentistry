@@ -186,6 +186,19 @@ function validateImportedData(data) {
 			}
 		}
 	}
+	if (data.settings.length !== 1) {
+		throw new Error(
+			"Backup must contain exactly one settings record."
+		);
+	}
+
+	if (
+		Number(data.settings[0].id) !== 1
+	) {
+		throw new Error(
+			"Settings record must have ID 1."
+		);
+	}
 
 	// Patient IDs must be unique.
 	const patientIds = new Set();
@@ -329,43 +342,43 @@ async function safeImport(data) {
 async function seedDatabase() {
   if ((await dbGetAll("patients")).length) return;
   const patientId = await dbPut("patients", {
-    name: "Test Patient",
-    phone: "+966 55 218 4301",
-    location: "Damascus",
-    workStudy: "University student",
-    dob: "1992-07-14",
-    gender: "Female",
-    allergies: "Penicillin",
-    medicalFlags: "Hypertension",
-    notes: "Prefers morning appointments.",
-    createdAt: new Date().toISOString(),
+	name: "Test Patient",
+	phone: "+966 55 218 4301",
+	location: "Damascus",
+	workStudy: "University student",
+	dob: "1992-07-14",
+	gender: "Female",
+	allergies: "Penicillin",
+	medicalFlags: "Hypertension",
+	notes: "Prefers morning appointments.",
+	createdAt: new Date().toISOString(),
   });
   await dbPut("odontograms", {
-    patientId,
-    toothNumber: 14,
-    surface: "O",
-    condition: "decay",
-    procedure: "Exam",
-    notes: "Occlusal lesion",
-    timestamp: new Date().toISOString(),
+	patientId,
+	toothNumber: 14,
+	surface: "O",
+	condition: "decay",
+	procedure: "Exam",
+	notes: "Occlusal lesion",
+	timestamp: new Date().toISOString(),
   });
   await dbPut("appointments", {
-    patientId,
-    patientName: "Test Patient",
-    date: new Date().toISOString().slice(0, 10),
-    startTime: "10:30",
-    duration: 30,
-    status: "booked",
-    procedure: "Routine examination",
-    notes: "",
+	patientId,
+	patientName: "Test Patient",
+	date: new Date().toISOString().slice(0, 10),
+	startTime: "10:30",
+	duration: 30,
+	status: "booked",
+	procedure: "Routine examination",
+	notes: "",
   });
   await dbPut("treatments", {
-    patientId,
-    toothNumber: 14,
-    description: "Composite restoration",
-    fee: 180,
-    status: "planned",
-    date: new Date().toISOString().slice(0, 10),
+	patientId,
+	toothNumber: 14,
+	description: "Composite restoration",
+	fee: 180,
+	status: "planned",
+	date: new Date().toISOString().slice(0, 10),
   });
 }
 */
