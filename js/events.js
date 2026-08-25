@@ -192,6 +192,18 @@ function bindPatientEvents() {
                             state.selectedPatient =
                                 backup.patient;
 
+                            state.odontogramPatientId =
+                                backup.patient.id;
+
+                            state.treatmentPatientId =
+                                backup.patient.id;
+
+                            state.treatmentPlanPatientId =
+                                backup.patient.id;
+
+                            state.prescriptionPatientId =
+                                backup.patient.id;
+
                             await refresh();
                         }
                     );
@@ -357,28 +369,28 @@ function bindTreatmentEvents() {
         }
     );
     $$("[data-edit-treatment]").forEach(
-    (button) => {
-        button.onclick = () =>
-            editTreatment(
-                Number(
-                    button.dataset
-                        .editTreatment
-                )
-            );
-    }
-);
+        (button) => {
+            button.onclick = () =>
+                editTreatment(
+                    Number(
+                        button.dataset
+                            .editTreatment
+                    )
+                );
+        }
+    );
 
-$$("[data-delete-treatment]").forEach(
-    (button) => {
-        button.onclick = () =>
-            deleteTreatment(
-                Number(
-                    button.dataset
-                        .deleteTreatment
-                )
-            );
-    }
-);
+    $$("[data-delete-treatment]").forEach(
+        (button) => {
+            button.onclick = () =>
+                deleteTreatment(
+                    Number(
+                        button.dataset
+                            .deleteTreatment
+                    )
+                );
+        }
+    );
 }
 
 
