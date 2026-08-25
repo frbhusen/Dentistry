@@ -301,6 +301,25 @@ I18N.en.workStudy = "Work / study";
 I18N.ar.workStudy = "العمل / الدراسة";
 I18N.en.deleteAppointment = "Delete appointment";
 I18N.ar.deleteAppointment = "حذف الموعد";
+I18N.en.confirmDeleteTreatment =
+  "Delete this treatment?";
+I18N.ar.confirmDeleteTreatment =
+  "هل تريد حذف هذا العلاج؟";
+I18N.en.treatmentDeleted =
+  "Treatment deleted";
+I18N.ar.treatmentDeleted =
+  "تم حذف العلاج";
+I18N.en.unableDeleteTreatment =
+  "Unable to delete treatment.";
+
+I18N.ar.unableDeleteTreatment =
+  "تعذر حذف العلاج.";
+
+I18N.en.unableSaveTreatment =
+  "Unable to save treatment.";
+
+I18N.ar.unableSaveTreatment =
+  "تعذر حفظ العلاج.";
 I18N.en.confirmDeleteAppointment = "Delete this appointment?";
 I18N.ar.confirmDeleteAppointment = "هل تريد حذف هذا الموعد؟";
 I18N.en.edit = "Edit";
