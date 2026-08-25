@@ -277,37 +277,78 @@ async function dbImport(data) {
 }
 
 function verifyImportedData(original, imported) {
-	for (const store of STORES) {
-		const originalRows = Array.isArray(original[store]) ? original[store] : [];
+    for (const store of STORES) {
+        const originalRows =
+            Array.isArray(original[store])
+                ? original[store]
+                : [];
 
-		const importedRows = Array.isArray(imported[store]) ? imported[store] : [];
+        const importedRows =
+            Array.isArray(imported[store])
+                ? imported[store]
+                : [];
 
-		if (originalRows.length !== importedRows.length) {
-			console.error(
-				`Import verification failed for ${store}:`,
-				originalRows.length,
-				importedRows.length,
-			);
+        if (
+            originalRows.length !==
+            importedRows.length
+        ) {
+            console.error(
+                `Import verification failed for ${store}:`,
+                originalRows.length,
+                importedRows.length
+            );
 
-			return false;
-		}
+            return false;
+        }
 
-		for (let index = 0; index < originalRows.length; index++) {
-			const originalRow = originalRows[index];
+        for (
+            let index = 0;
+            index < originalRows.length;
+            index++
+        ) {
+            const originalRow =
+                originalRows[index];
 
-			const importedRow = importedRows[index];
+            const importedRow =
+                importedRows[index];
 
-			if (JSON.stringify(originalRow) !== JSON.stringify(importedRow)) {
-				console.error(
-					`Import verification failed for ${store} record ${index}`,
-				);
+            const originalKeys =
+                Object.keys(originalRow).sort();
 
-				return false;
-			}
-		}
-	}
+            const importedKeys =
+                Object.keys(importedRow).sort();
 
-	return true;
+            if (
+                JSON.stringify(originalKeys) !==
+                JSON.stringify(importedKeys)
+            ) {
+                console.error(
+                    `Import verification failed for ${store} record ${index}`
+                );
+
+                return false;
+            }
+
+            for (const key of originalKeys) {
+                if (
+                    JSON.stringify(
+                        originalRow[key]
+                    ) !==
+                    JSON.stringify(
+                        importedRow[key]
+                    )
+                ) {
+                    console.error(
+                        `Import verification failed for ${store}.${key} record ${index}`
+                    );
+
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
 
 async function safeImport(data) {
