@@ -675,10 +675,29 @@
 }
 
 .primary-odontogram .tooth-label {
-  font-size: 8px;
+  font-size: 12px;
 }
 .teeth-row {
   direction: ltr;
+}
+
+.odontogram-direction-labels {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 0 5px;
+    box-sizing: border-box;
+}
+
+.odontogram-direction-labels span {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+}
+.odontogram-direction-labels .right {
+margin-left: 60vh;
 }
 
 input[name="phone"] {
