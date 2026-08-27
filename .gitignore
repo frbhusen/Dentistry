@@ -23,3 +23,10 @@ Thumbs.db
 
 package-lock.json
 package.json
+helper.txt
+
+# Android
+capacitor.config.*
+android/
+
+
