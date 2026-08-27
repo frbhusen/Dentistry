@@ -4,42 +4,99 @@ function renderOdontogram() {
 		state.patients.find(
 			(patient) => patient.id === Number(state.odontogramPatientId),
 		) || state.selectedPatient;
+
 	const patientOptions = state.patients
 		.map(
 			(patient) =>
-				`<option value="${patient.id}" ${patient.id === odontogramPatient?.id ? "selected" : ""}>${esc(patient.name)} · ${esc(patient.phone || "")}</option>`,
+				`<option value="${patient.id}" ${
+					patient.id === odontogramPatient?.id ? "selected" : ""
+				}>${esc(patient.name)} · ${esc(patient.phone || "")}</option>`,
 		)
 		.join("");
+
 	const upperCount = primary ? 10 : 16;
 	const lowerCount = primary ? 10 : 16;
-	return `<section class="card workspace-card"><div class="workspace-toolbar"><div><div class="eyebrow">${t("odontogram")}</div><h2>${odontogramPatient ? esc(odontogramPatient.name) : t("selectPatient")}</h2><div class="field odontogram-patient-picker"><label>${t("patient")}</label><select id="odontogramPatientSelect"><option value="">${t("selectPatient")}</option>${patientOptions}</select></div></div><div class="segmented"><button class="${!primary ? "active" : ""}" data-mode="permanent">${t("permanent")}</button><button class="${primary ? "active" : ""}" data-mode="primary">${t("primary")}</button></div></div><div class="odontogram-wrap ${primary ? "primary-odontogram" : ""}"><div class="arch-title">${t("maxillary")}</div>
 
-<div class="odontogram-direction-labels">
-    ${!primary ? `<span class="right">Left</span>` : ""}
-    ${!primary ? `<span class="left">Right</span>` : ""}
-</div>
+	return `<section class="card workspace-card">
+		<div class="workspace-toolbar">
+			<div>
+				<div class="eyebrow">${t("odontogram")}</div>
 
-<div class="teeth-row">
-    ${Array.from(
-        { length: upperCount },
-        (_, i) => tooth(primary ? i + 1 : i + 1, i, upperCount)
-    ).join("")}
-</div><div class="arch-title" style="margin-top:26px">${t("mandibular")}</div><div class="teeth-row">${Array.from({ length: lowerCount }, (_, i) => tooth(primary ? i + 11 : i + 17, i, lowerCount)).join("")}</div><div class="legend">${[
-		["healthy", "healthy"],
-		["decay", "decay"],
-		["filling", "filling"],
-		["crown", "crown"],
-		["rct", "rct"],
-		["extract", "extract"],
-		["implant", "implant"],
-	]
-		.map(
-			([color, key]) =>
-				`<span><i style="background:var(--${color === "healthy" ? "surface" : color})"></i>${t(key)}</span>`,
-		)
-		.join("")}</div></div></section>`;
+				<h2>${odontogramPatient ? esc(odontogramPatient.name) : t("selectPatient")}</h2>
+
+				<div class="field odontogram-patient-picker">
+					<label>${t("patient")}</label>
+					<select id="odontogramPatientSelect">
+						<option value="">${t("selectPatient")}</option>
+						${patientOptions}
+					</select>
+				</div>
+			</div>
+
+			<div class="segmented">
+				<button class="${!primary ? "active" : ""}" data-mode="permanent">
+					${t("permanent")}
+				</button>
+
+				<button class="${primary ? "active" : ""}" data-mode="primary">
+					${t("primary")}
+				</button>
+			</div>
+		</div>
+
+		<div class="odontogram-wrap ${primary ? "primary-odontogram" : ""}">
+
+			<div class="arch-title">${t("maxillary")}</div>
+
+			<div class="odontogram-direction-labels">
+				<span class="right">${t("left")}</span>
+				<span class="left">${t("right")}</span>
+			</div>
+
+			<div class="teeth-row">
+				${Array.from(
+					{ length: upperCount },
+					(_, i) => tooth(primary ? i + 1 : i + 1, i, upperCount),
+				).join("")}
+			</div>
+
+			<div class="arch-title" style="margin-top:26px">
+				${t("mandibular")}
+			</div>
+
+			<div class="teeth-row">
+				${Array.from(
+					{ length: lowerCount },
+					(_, i) =>
+						tooth(
+							primary ? i + 11 : i + 17,
+							i,
+							lowerCount,
+						),
+				).join("")}
+			</div>
+
+			<div class="legend">
+				${[
+					["healthy", "healthy"],
+					["decay", "decay"],
+					["filling", "filling"],
+					["crown", "crown"],
+					["rct", "rct"],
+					["extract", "extract"],
+					["implant", "implant"],
+				]
+					.map(
+						([color, key]) =>
+							`<span><i style="background:var(--${
+								color === "healthy" ? "surface" : color
+							})"></i>${t(key)}</span>`,
+					)
+					.join("")}
+			</div>
+		</div>
+	</section>`;
 }
-
 const TOOTH_SHAPES = {
 	incisor: `<svg class="tooth-shape" viewBox="0 0 40 56" xmlns="http://www.w3.org/2000/svg"><path d="M9 4 Q20 -1 31 4 L30 22 Q30 30 20 30 Q10 30 10 22 Z M14 30 Q13 42 17 52 Q20 55 23 52 Q27 42 26 30 Z"/></svg>`,
 	canine: `<svg class="tooth-shape" viewBox="0 0 40 56" xmlns="http://www.w3.org/2000/svg"><path d="M20 1 L30 20 Q31 30 20 32 Q9 30 10 20 Z M14 32 Q12 44 17 53 Q20 56 23 53 Q28 44 26 32 Z"/></svg>`,
@@ -62,6 +119,7 @@ function toothShapeType(positionIndex, rowLength) {
 	if (dist < 3) return "canine";
 	return "molar";
 }
+
 /* deprecated
 function tooth(number) {
 	const primary = state.toothMode === "primary";
@@ -82,6 +140,8 @@ function tooth(number) {
 	return `<button class="tooth ${primary ? "primary-tooth " : ""}${condition}" data-tooth="${number}" title="${t("tooth")} ${label}"><span class="tooth-mark"></span><span class="tooth-label">${label}</span></button>`;
 }
 */
+
+
 function tooth(number, positionIndex, rowLength) {
 	const primary = state.toothMode === "primary";
 

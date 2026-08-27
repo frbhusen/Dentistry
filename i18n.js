@@ -140,7 +140,10 @@ const I18N = {
     pinIncorrect: "Incorrect PIN.",
     pinInvalid: "PIN must contain 4–6 digits.",
     pinMismatch: "PINs do not match.",
-    pinVerifyFailed: "Unable to verify PIN."
+    pinVerifyFailed: "Unable to verify PIN.",
+    savePINBtn: "Save PIN",
+    left: "Left",
+    right: "Right",
   },
   ar: {
     appName: "AeroDent",
@@ -274,7 +277,6 @@ const I18N = {
     treatmentPlanDeleted: "تم حذف الخطة العلاجية",
     unableDeleteTreatmentPlan: "تعذر حذف الخطة العلاجية",
     unableSaveTreatmentPlan: "تعذر حفظ الخطة العلاجية",
-
     patientTimeline: "السجل الزمني للمريض",
     appointment: "موعد",
     treatment: "علاج",
@@ -284,7 +286,10 @@ const I18N = {
     pinIncorrect: "رمز PIN غير صحيح.",
     pinInvalid: "يجب أن يتكون رمز PIN من 4–6 أرقام.",
     pinMismatch: "رمزا PIN غير متطابقين.",
-    pinVerifyFailed: "تعذر التحقق من رمز PIN."
+    pinVerifyFailed: "تعذر التحقق من رمز PIN.",
+    savePINBtn: "حفظ الرمز",
+    left: "يسار",
+    right: "يمين",
   },
 };
 I18N.en.export = "Export Excel";

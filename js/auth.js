@@ -74,15 +74,15 @@ function unlockApp() {
 }
 
 function showPINSetup() {
-    // Never show setup if a PIN is already configured.
-    if (state.settings.pinEnabled === true) {
-        lockApp();
-        return;
-    }
-
     const lockScreen = $("#lockScreen");
 
     if (!lockScreen) {
+        return;
+    }
+
+    // If a PIN already exists, always show the unlock screen.
+    if (state.settings.pinHash || state.settings.pinEnabled === true) {
+        lockApp();
         return;
     }
 
@@ -108,6 +108,11 @@ function showPINSetup() {
 }
 
 async function savePIN() {
+    if (state.settings.pinHash || state.settings.pinEnabled === true) {
+        lockApp();
+        return;
+    }
+
     const pin = $("#newPINInput").value.trim();
 
     const confirmPIN = $("#confirmPINInput").value.trim();

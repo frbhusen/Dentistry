@@ -665,17 +665,17 @@
 } */
 
 .primary-odontogram .tooth {
-  width: 30px;
-  height: 54px;
+  width: 40px;
+  height: 60px;
 }
 
 .primary-odontogram .tooth-visual {
-  width: 26px;
-  height: 38px;
+  width: 40px;
+  height: 60px;
 }
 
 .primary-odontogram .tooth-label {
-  font-size: 12px;
+  font-size: 16px;
 }
 .teeth-row {
   direction: ltr;
@@ -683,21 +683,20 @@
 
 .odontogram-direction-labels {
     display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-bottom: 8px;
-    padding: 0 5px;
-    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
+
+    width: 70%;
+    margin: 0 auto 12px;
+
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
 }
 
 .odontogram-direction-labels span {
-    display: block;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--muted);
-}
-.odontogram-direction-labels .right {
-margin-left: 60vh;
+    min-width: 60px;
+    text-align: center;
 }
 
 input[name="phone"] {
@@ -1442,8 +1441,8 @@ select:focus-visible {
 
 .tooth-visual {
   position: relative;
-  width: 32px;
-  height: 46px;
+  width: 40px;
+  height: 60px;
 }
 
 .tooth-shape {
@@ -1461,7 +1460,7 @@ select:focus-visible {
 }
 
 .tooth-label {
-  font-size: 9px;
+  font-size: 16px;
   line-height: 1;
 }
 
@@ -2087,35 +2086,63 @@ textarea {
   animation: rise 0.2s ease;
 }
 
-/* Custom App Footer */
+/* Professional Footer */
 .app-footer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  /* Change this from 40px to auto */
-  margin-top: auto;
+    gap: 20px;
 
-  border-top: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 12px;
-}
-.app-footer p {
-  margin: 0;
+    margin-top: auto;
+    padding: 22px 4px 6px;
+
+    border-top: 1px solid var(--line);
+
+    color: var(--muted);
+    font-size: 14px;
 }
 
-.app-footer a {
-  color: var(--primary);
-  text-decoration: none;
-  font-weight: 700;
-  transition: color 0.15s ease;
+.footer-left,
+.footer-center,
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
 }
 
-.app-footer a:hover {
-  color: #036fa6;
-  text-decoration: underline;
+.footer-center {
+    text-align: center;
+}
+
+.footer-right a {
+    color: var(--ink);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.footer-right a:hover {
+    color: var(--primary);
+}
+
+/* Mobile */
+@media (max-width: 700px) {
+    .app-footer {
+        flex-direction: column;
+        justify-content: center;
+        gap: 9px;
+
+        padding-top: 18px;
+
+        text-align: center;
+    }
+
+    .footer-left,
+    .footer-center,
+    .footer-right {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
 
 .undo-toast {
@@ -2297,9 +2324,6 @@ textarea {
     border: 0 !important;
   }
 }
-/* Hide footer during printing */
-@media print {
-  .print-hidden {
+.hidden {
     display: none !important;
-  }
 }
