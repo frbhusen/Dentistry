@@ -160,7 +160,7 @@ function renderAppointments() {
                                 )}
                                                         </span>
                                                     </div>
-
+                                                    <button class="button button-ghost" data-edit-appointment="${item.id}">${t("edit")}</button>
                                                     <button
                                                         class="appointment-delete"
                                                         data-delete-appointment="${item.id}"
@@ -374,7 +374,8 @@ function addAppointment() {
             const hasConflict =
                 state.appointments.some(
                     (appointment) => {
-
+                        if (appointment.status === "cancelled")
+                            return false;
                         if (
                             appointment.date !==
                             date
@@ -441,6 +442,67 @@ function addAppointment() {
         };
 }
 
+function editAppointment(id) {
+    const appointment = state.appointments.find((item) => item.id === id);
+    if (!appointment) return;
+
+    modal(
+        t("edit"),
+        `
+        <form id="editAppointmentForm" class="form-grid">
+            <div class="field">
+                <label>${t("date")}</label>
+                <input type="date" name="date" value="${esc(appointment.date)}" required>
+            </div>
+            <div class="field">
+                <label>${t("time")}</label>
+                <input type="time" name="startTime" value="${esc(appointment.startTime)}" required>
+            </div>
+            <div class="field full-span">
+                <label>${t("procedure")}</label>
+                <input name="procedure" value="${esc(appointment.procedure || "")}">
+            </div>
+            <div class="field">
+                <label>${t("status")}</label>
+                <select name="status">
+                    <option value="booked" ${appointment.status === "booked" ? "selected" : ""}>${t("booked")}</option>
+                    <option value="completed" ${appointment.status === "completed" ? "selected" : ""}>${t("completed")}</option>
+                    <option value="cancelled" ${appointment.status === "cancelled" ? "selected" : ""}>${t("cancelled")}</option>
+                </select>
+            </div>
+            <div class="form-actions full-span">
+                <button class="button button-primary" type="submit">${t("save")}</button>
+            </div>
+        </form>
+        `,
+    );
+
+    $("#editAppointmentForm").onsubmit = async (event) => {
+        event.preventDefault();
+        const data = Object.fromEntries(new FormData(event.target));
+        const duration = Number(appointment.duration) || Number(state.settings.slotDuration) || 30;
+        const newStart = new Date(`${data.date}T${data.startTime}`);
+        const newEnd = new Date(newStart.getTime() + duration * 60000);
+
+        const hasConflict = state.appointments.some((other) => {
+            if (other.id === appointment.id) return false;
+            if (other.status === "cancelled") return false;
+            if (other.date !== data.date) return false;
+            const otherStart = new Date(`${other.date}T${other.startTime}`);
+            const otherEnd = new Date(otherStart.getTime() + (Number(other.duration) || 30) * 60000);
+            return newStart < otherEnd && newEnd > otherStart;
+        });
+
+        if (hasConflict) {
+            toast("This time slot is already occupied.");
+            return;
+        }
+
+        await dbPut("appointments", { ...appointment, ...data });
+        $("#modal").classList.remove("show");
+        await refresh();
+    };
+}
 
 function timeToMinutes(value) {
     const [hours, minutes] =

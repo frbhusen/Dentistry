@@ -80,7 +80,8 @@ async function updateTooth(condition) {
 	const existing = state.odontograms.find(
 		(item) =>
 			item.patientId === odontogramPatient.id &&
-			item.toothNumber === state.selectedTooth,
+			item.toothNumber === state.selectedTooth &&
+			item.toothMode === state.toothMode,
 	);
 
 	if (condition === "clear") {
@@ -114,13 +115,15 @@ async function saveCurrentToothNote() {
 	const existing = state.odontograms.find(
 		(item) =>
 			item.patientId === odontogramPatient.id &&
-			item.toothNumber === state.selectedTooth,
+			item.toothNumber === state.selectedTooth &&
+			item.toothMode === state.toothMode,
 	);
 
 	await dbPut("odontograms", {
 		...(existing || {}),
 		patientId: odontogramPatient.id,
 		toothNumber: state.selectedTooth,
+		toothMode: state.toothMode,
 		condition: existing?.condition || "healthy",
 		notes: $("#toothNote").value,
 		timestamp: new Date().toISOString(),

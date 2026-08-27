@@ -9,6 +9,31 @@ async function hashPIN(pin) {
         .join("");
 }
 
+async function derivePINHash(pin, existingSaltHex) {
+    const saltBytes = existingSaltHex
+        ? new Uint8Array(existingSaltHex.match(/.{1,2}/g).map((b) => parseInt(b, 16)))
+        : crypto.getRandomValues(new Uint8Array(16));
+
+    const keyMaterial = await crypto.subtle.importKey(
+        "raw",
+        new TextEncoder().encode(pin),
+        "PBKDF2",
+        false,
+        ["deriveBits"],
+    );
+
+    const derivedBits = await crypto.subtle.deriveBits(
+        { name: "PBKDF2", salt: saltBytes, iterations: 150000, hash: "SHA-256" },
+        keyMaterial,
+        256,
+    );
+
+    const toHex = (bytes) =>
+        Array.from(new Uint8Array(bytes)).map((b) => b.toString(16).padStart(2, "0")).join("");
+
+    return { hash: toHex(derivedBits), salt: toHex(saltBytes) };
+}
+
 function lockApp() {
     const lockScreen = $("#lockScreen");
 
@@ -99,7 +124,7 @@ async function savePIN() {
         return;
     }
 
-    const pinHash = await hashPIN(pin);
+    const { hash, salt } = await derivePINHash(pin);
 
     const newSettings = {
         ...state.settings,
@@ -108,59 +133,68 @@ async function savePIN() {
 
         pinEnabled: true,
 
-        pinHash,
+        pinHash: hash,
+
+        pinSalt: salt,
     };
 
     try {
-    await dbPut("settings", newSettings);
+        await dbPut("settings", newSettings);
 
-    state.settings = newSettings;
+        state.settings = newSettings;
 
-    $("#pinError").textContent = "";
+        $("#pinError").textContent = "";
 
-    unlockApp();
+        unlockApp();
 
-    resetInactivityTimer();
-} catch (error) {
-    console.error("Failed to save PIN:", error);
+        resetInactivityTimer();
+    } catch (error) {
+        console.error("Failed to save PIN:", error);
 
-    $("#pinError").textContent =
-        "Unable to save PIN. Please try again.";
+        $("#pinError").textContent =
+            "Unable to save PIN. Please try again.";
+    }
 }
-}
+
+let failedPinAttempts = 0;
+let pinLockUntil = 0;
 
 async function verifyPIN() {
-    const pin = $("#pinInput").value.trim();
-
-    if (!pin) {
-        $("#pinError").textContent = "Please enter your PIN.";
-
+    if (Date.now() < pinLockUntil) {
+        const secondsLeft = Math.ceil((pinLockUntil - Date.now()) / 1000);
+        $("#pinError").textContent = `Too many attempts. Try again in ${secondsLeft}s.`;
         return;
     }
 
+    const pin = $("#pinInput").value.trim();
+    if (!pin) {
+        $("#pinError").textContent = "Please enter your PIN.";
+        return;
+    }
     if (!state.settings.pinHash) {
         $("#pinError").textContent = "No PIN has been configured.";
-
         return;
     }
 
     try {
-        const enteredHash = await hashPIN(pin);
+        const { hash } = await derivePINHash(pin, state.settings.pinSalt);
 
-        if (enteredHash === state.settings.pinHash) {
+        if (hash === state.settings.pinHash) {
+            failedPinAttempts = 0;
             unlockApp();
-
             resetInactivityTimer();
         } else {
+            failedPinAttempts++;
+            if (failedPinAttempts >= 5) {
+                pinLockUntil = Date.now() + 30000;
+                failedPinAttempts = 0;
+            }
             $("#pinError").textContent = t("pinIncorrect");
-
             $("#pinInput").value = "";
-
             $("#pinInput").focus();
         }
     } catch (error) {
         console.error("PIN verification failed:", error);
-
         $("#pinError").textContent = t("pinVerifyFailed");
     }
 }

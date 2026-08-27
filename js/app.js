@@ -79,8 +79,6 @@ async function refresh(preserveEmptySelection = false) {
     state.prescriptionPatientId = null;
   }
 
-  state.treatments = await dbGetAll("treatments");
-
   render();
 }
 function renderDashboard() {

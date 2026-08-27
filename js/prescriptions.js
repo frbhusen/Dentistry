@@ -15,10 +15,8 @@ function renderPrescriptions() {
                 `<option value="${patient.id}" ${patient.id === prescriptionPatient?.id ? "selected" : ""}>${esc(patient.name)} · ${esc(patient.phone || "")}</option>`,
         )
         .join("");
-    return `<section class="content-grid prescriptions-screen"><div class="card"><div class="card-heading"><h2>${t("prescriptions")}</h2><button class="button button-primary" data-action="addPrescription">＋ ${t("addPrescription")}</button></div><div class="field treatment-patient-picker"><label>${t("patient")}</label><select id="prescriptionPatientSelect"><option value="">${t("selectPatient")}</option>${patientOptions}</select></div>${safePrescriptions.map((item) => `<div class="prescription-row"><div><b>${item.medications.map((m) => esc(m.name)).join(", ")}</b><small>${esc(item.date)} · ${item.medications.length} ${t("medication")}</small></div><div class="prescription-actions"><button class="button button-ghost" data-edit-prescription="${item.id}">${t("edit")}</button><button class="button button-ghost" data-print-prescription="${item.id}">${t("print")}</button></div></div><div class="prescription-print ${state.printPrescriptionId === item.id ? "active" : ""}"><header><h1>${esc(state.settings.clinicName || t("appName"))}</h1><p>${esc(state.settings.doctorName || "")}</p></header><h2>${t("prescriptions")}</h2><p><b>${t("patient")}:</b> ${esc(prescriptionPatient?.name || "")}</p><p><b>${t("date")}:</b> ${esc(item.date)}</p><hr>${item.medications.map((m) => `<div class="prescription-medication"><h3>${esc(m.name)}</h3><p>${t("dosage")}: ${esc(m.dosage)} · ${t("frequency")}: ${esc(m.frequency)} · ${t("duration")}: ${esc(m.duration)}</p><p>${t("instructions")}: ${esc(m.instructions)}</p></div>`).join("")}<hr><p>${esc(item.notes || "")}</p><footer>${esc(state.settings.doctorName || "")}</footer></div>`).join("") || `<p class="muted">${t("noVisits")}</p>`}</div><div class="card"><h2>${t("medication")}</h2><p class="muted">${t("addPrescription")}</p><div class="badge badge-blue">Amoxicillin 500mg</div> <div class="badge badge-blue">Ibuprofen 400mg</div> <div class="badge badge-blue">Chlorhexidine 0.12%</div></div></section>`;
+    return `<section class="content-grid prescriptions-screen"><div class="card"><div class="card-heading"><h2>${t("prescriptions")}</h2><button class="button button-primary" data-action="addPrescription">＋ ${t("addPrescription")}</button></div><div class="field treatment-patient-picker"><label>${t("patient")}</label><select id="prescriptionPatientSelect"><option value="">${t("selectPatient")}</option>${patientOptions}</select></div>${safePrescriptions.map((item) => `<div class="prescription-row"><div><b>${item.medications.map((m) => esc(m.name)).join(", ")}</b><small>${esc(item.date)} · ${item.medications.length} ${t("medication")}</small></div><div class="prescription-actions"><button class="button button-ghost" data-edit-prescription="${item.id}">${t("edit")}</button><button class="button button-ghost" data-delete-prescription="${item.id}">×</button><button class="button button-ghost" data-print-prescription="${item.id}">${t("print")}</button></div></div><div class="prescription-print ${state.printPrescriptionId === item.id ? "active" : ""}"><header><h1>${esc(state.settings.clinicName || t("appName"))}</h1><p>${esc(state.settings.doctorName || "")}</p></header><h2>${t("prescriptions")}</h2><p><b>${t("patient")}:</b> ${esc(prescriptionPatient?.name || "")}</p><p><b>${t("date")}:</b> ${esc(item.date)}</p><hr>${item.medications.map((m) => `<div class="prescription-medication"><h3>${esc(m.name)}</h3><p>${t("dosage")}: ${esc(m.dosage)} · ${t("frequency")}: ${esc(m.frequency)} · ${t("duration")}: ${esc(m.duration)}</p><p>${t("instructions")}: ${esc(m.instructions)}</p></div>`).join("")}<hr><p>${esc(item.notes || "")}</p><footer>${esc(state.settings.doctorName || "")}</footer></div>`).join("") || `<p class="muted">${t("noVisits")}</p>`}</div><div class="card"><h2>${t("medication")}</h2><p class="muted">${t("addPrescription")}</p><div class="badge badge-blue">Amoxicillin 500mg</div> <div class="badge badge-blue">Ibuprofen 400mg</div> <div class="badge badge-blue">Chlorhexidine 0.12%</div></div></section>`;
 }
-
-
 function prescriptionMedicationFields(medication = {}, index = 0) {
     return `
         <div
@@ -81,54 +79,21 @@ function prescriptionMedicationFields(medication = {}, index = 0) {
     `;
 }
 function prescriptionForm(record) {
-    const medications =
-        record?.medications?.length
-            ? record.medications
-            : [{}];
-
+    const medications = record?.medications?.length ? record.medications : [{}];
     return `
-        <form id="rxForm" class="form-grid">
-
-            <div id="prescriptionMedications" class="full-span">
-                ${medications
-            .map(
-                (medication, index) =>
-                    prescriptionMedicationFields(
-                        medication,
-                        index
-                    )
-            )
-            .join("")}
-            </div>
-
-            <div class="form-actions full-span">
-                <button
-                    type="button"
-                    class="button button-ghost"
-                    id="addMedicationBtn"
-                >
-                    + Add medication
-                </button>
-            </div>
-
-            <div class="field full-span">
-                <label>${t("notes")}</label>
-                <textarea
-                    name="notes"
-                    rows="3"
-                >${esc(record?.notes || "")}</textarea>
-            </div>
-
-            <div class="form-actions full-span">
-                <button
-                    class="button button-primary"
-                    type="submit"
-                >
-                    ${t("save")}
-                </button>
-            </div>
-
-        </form>
+        <div id="prescriptionMedications" class="full-span">
+            ${medications.map((medication, index) => prescriptionMedicationFields(medication, index)).join("")}
+        </div>
+        <div class="form-actions full-span">
+            <button type="button" class="button button-ghost" id="addMedicationBtn">+ Add medication</button>
+        </div>
+        <div class="field full-span">
+            <label>${t("notes")}</label>
+            <textarea name="notes" rows="3">${esc(record?.notes || "")}</textarea>
+        </div>
+        <div class="form-actions full-span">
+            <button class="button button-primary" type="submit">${t("save")}</button>
+        </div>
     `;
 }
 function bindPrescriptionMedicationControls() {
@@ -183,7 +148,16 @@ function addPrescription() {
         .join("");
     modal(
         t("addPrescription"),
-        `<form id="rxForm" class="form-grid"><div class="field full-span"><label>${t("patient")}</label><select name="patientId" required><option value="">${t("selectPatient")}</option>${patientOptions}</select></div>${prescriptionForm().replace('<form id="rxForm" class="form-grid">', "").replace("</form>", "")}</form>`,
+        `<form id="rxForm" class="form-grid">
+        <div class="field full-span">
+            <label>${t("patient")}</label>
+            <select name="patientId" required>
+                <option value="">${t("selectPatient")}</option>
+                ${patientOptions}
+            </select>
+        </div>
+        ${prescriptionForm()}
+    </form>`,
     );
     bindPrescriptionMedicationControls();
     $("#rxForm").onsubmit = async (e) => {
@@ -248,7 +222,7 @@ function collectPrescriptionMedications() {
 function editPrescription(id) {
     const record = state.prescriptions.find((item) => item.id === id);
     if (!record) return;
-    modal(t("edit"), prescriptionForm(record));
+    modal(t("edit"), `<form id="rxForm" class="form-grid">${prescriptionForm(record)}</form>`);
     bindPrescriptionMedicationControls();
     $("#rxForm").onsubmit = async (e) => {
         e.preventDefault();
@@ -263,6 +237,19 @@ function editPrescription(id) {
         $("#modal").classList.remove("show");
         await refresh();
     };
+}
+async function deletePrescription(id) {
+    const record = state.prescriptions.find((item) => item.id === id);
+    if (!record) return;
+    if (!confirm(t("confirmDeleteTreatment"))) return;
+
+    await dbDelete("prescriptions", id);
+    await refresh();
+
+    showUndo(t("treatmentDeleted"), async () => {
+        await dbPut("prescriptions", record);
+        await refresh();
+    });
 }
 function printPrescription(id) {
     state.printPrescriptionId = id;

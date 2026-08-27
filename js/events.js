@@ -458,7 +458,9 @@ function bindAppointmentEvents() {
             };
         }
     );
-
+    $$("[data-edit-appointment]").forEach((button) => {
+        button.onclick = () => editAppointment(Number(button.dataset.editAppointment));
+    });
     $$("[data-agenda-date]").forEach(
         (button) => {
             button.onclick = () => {
@@ -606,6 +608,18 @@ function bindXrayEvents() {
                 if (!file) {
                     return;
                 }
+                if (!file.type.startsWith("image/")) {
+                    toast(t("unableProcessXray"));
+                    xray.value = "";
+                    return;
+                }
+
+                const MAX_SOURCE_BYTES = 15 * 1024 * 1024; // 15MB pre-compression cap
+                if (file.size > MAX_SOURCE_BYTES) {
+                    toast("Image is too large (max 15MB).");
+                    xray.value = "";
+                    return;
+                }
 
                 if (
                     !state.selectedPatient
@@ -731,7 +745,9 @@ function bindPrescriptionEvents() {
                 );
         }
     );
-
+    $$("[data-delete-prescription]").forEach((button) => {
+        button.onclick = () => deletePrescription(Number(button.dataset.deletePrescription));
+    });
     $$(
         "[data-print-prescription]"
     ).forEach(

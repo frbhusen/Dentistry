@@ -127,7 +127,10 @@ function addTreatment() {
             ${t("cancelled")}
         </option>
     </select>
-</div><input type="number" name="fee" value="0"></div><div class="field full-span"><label>${t("procedure")}</label><input name="description" required></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button></div></form>`,
+</div><div class="field">
+    <label>${t("fee")}</label>
+    <input type="number" name="fee" min="0" step="0.01" value="0">
+</div></div><div class="field full-span"><label>${t("procedure")}</label><input name="description" required></div><div class="form-actions full-span"><button class="button button-primary">${t("save")}</button></div></form>`,
     );
     $("#treatmentForm").onsubmit = async (e) => {
         e.preventDefault();
