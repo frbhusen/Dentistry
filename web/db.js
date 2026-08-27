@@ -1,6 +1,6 @@
-const DB_NAME = "aerodent-db";
+const DB_NAME = "aerodent-release-v1";
 
-const DB_VERSION = 3;
+const DB_VERSION = 1;
 
 const STORES = [
 	"patients",
