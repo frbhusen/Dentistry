@@ -1534,6 +1534,12 @@ textarea {
   padding: 7px 10px;
   border-radius: 5px;
   font-size: 11px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.appointment > div:first-child {
+  flex: 1 1 auto;
 }
 
 .appointment b {

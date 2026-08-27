@@ -1,4 +1,4 @@
-const CACHE = "aerodent-v3";
+const CACHE = "aerodent-v4";
 const ASSETS = [
   "./",
   "./index.html",
