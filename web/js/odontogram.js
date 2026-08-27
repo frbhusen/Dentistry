@@ -49,8 +49,8 @@ function renderOdontogram() {
 			<div class="arch-title">${t("maxillary")}</div>
 
 			<div class="odontogram-direction-labels">
-				<span class="right">${t("left")}</span>
-				<span class="left">${t("right")}</span>
+				<span class="right">${t("right")}</span>
+				<span class="left"W>${t("left")}</span>
 			</div>
 
 			<div class="teeth-row">

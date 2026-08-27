@@ -682,21 +682,24 @@
 }
 
 .odontogram-direction-labels {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 
-    width: 70%;
-    margin: 0 auto 12px;
+	width: 50%;
+	margin: 0 auto 12px;
 
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 600;
+	direction: ltr;
+
+	color: var(--muted);
+	font-size: 16px;
+	font-weight: 600;
 }
 
-.odontogram-direction-labels span {
-    min-width: 60px;
-    text-align: center;
+.odontogram-direction-labels .right,
+.odontogram-direction-labels .left {
+	width: 60px;
+	text-align: center;
 }
 
 input[name="phone"] {
