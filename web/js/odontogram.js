@@ -50,7 +50,7 @@ function renderOdontogram() {
 
 			<div class="odontogram-direction-labels">
 				<span class="right">${t("right")}</span>
-				<span class="left"W>${t("left")}</span>
+				<span class="left">${t("left")}</span>
 			</div>
 
 			<div class="teeth-row">

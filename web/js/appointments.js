@@ -277,7 +277,7 @@ function addAppointment() {
 
                 <input
                     name="procedure"
-                    value="Routine examination"
+                    value="${t("routineExamination")}"
                 >
 
             </div>
@@ -347,7 +347,7 @@ function addAppointment() {
                 appointmentEnd > workEnd
             ) {
                 toast(
-                    "Appointment must be within clinic working hours."
+                    t("appointmentWorkingHours")
                 );
 
                 return;
@@ -411,7 +411,7 @@ function addAppointment() {
 
             if (hasConflict) {
                 toast(
-                    "This time slot is already occupied."
+                    t("appointmentConflict")
                 );
 
                 return;

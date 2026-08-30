@@ -1,4 +1,6 @@
-const DB_NAME = "aerodent-release-v1";
+const DB_NAME = window.AERODENT_DEMO
+    ? "aerodent-demo-v1"
+    : "aerodent-release-v1";
 
 const DB_VERSION = 1;
 
@@ -424,5 +426,91 @@ async function seedDatabase() {
 }
 */
 async function seedDatabase() {
-	//No Demo
+    if (!window.AERODENT_DEMO) {
+        return;
+    }
+
+    const existingPatients = await dbGetAll("patients");
+
+    if (existingPatients.length > 0) {
+        return;
+    }
+
+    const patientId = await dbPut("patients", {
+        name: "Sarah Ahmad",
+        phone: "+963 912 345 678",
+        location: "Damascus",
+        workStudy: "Teacher",
+        dob: "1997-04-18",
+        gender: "Female",
+        allergies: "Penicillin",
+        medicalFlags: "",
+        notes: "Demo patient for AeroDent.",
+        createdAt: new Date().toISOString(),
+    });
+
+    await dbPut("odontograms", {
+        patientId,
+        toothNumber: 14,
+        toothMode: "permanent",
+        condition: "decay",
+        procedure: "Caries",
+        notes: "Demo finding",
+        timestamp: new Date().toISOString(),
+    });
+
+    await dbPut("odontograms", {
+        patientId,
+        toothNumber: 24,
+        toothMode: "permanent",
+        condition: "filling",
+        procedure: "Filling",
+        notes: "",
+        timestamp: new Date().toISOString(),
+    });
+
+    await dbPut("treatments", {
+        patientId,
+        toothNumber: 14,
+        description: "Composite restoration",
+        fee: 150000,
+        status: "planned",
+        date: today(),
+    });
+
+    await dbPut("treatmentPlans", {
+        patientId,
+        toothNumber: 14,
+        description: "Composite restoration",
+        fee: 150000,
+        status: "planned",
+        date: today(),
+    });
+
+    await dbPut("appointments", {
+        patientId,
+        patientName: "Sarah Ahmad",
+        date: today(),
+        startTime: "10:30",
+        duration: 30,
+        status: "booked",
+        procedure: "Dental examination",
+        notes: "",
+    });
+
+    await dbPut("settings", {
+        id: 1,
+        currencySymbol: "SYR",
+        clinicName: "AeroDent Demo Clinic",
+        doctorName: "Dr. Ahmad",
+        phone: "+963 900 000 000",
+        address: "Damascus",
+        workStartHour: "09:00",
+        workEndHour: "18:00",
+        slotDuration: 30,
+        currentLanguage: "ar",
+        pinEnabled: false,
+        pinHash: "",
+        pinSalt: "",
+    });
 }

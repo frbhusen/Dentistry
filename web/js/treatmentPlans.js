@@ -243,7 +243,9 @@ function addTreatmentPlan() {
         } catch (error) {
             console.error("Failed to create treatment plan:", error);
 
-            toast("Unable to save treatment plan.");
+            toast(
+                t("unableSaveTreatmentPlan")
+            );
         }
     };
 }
@@ -472,7 +474,9 @@ function editTreatmentPlan(id) {
         } catch (error) {
             console.error("Failed to update treatment plan:", error);
 
-            toast("Unable to update treatment plan.");
+            toast(
+                t("unableUpdateTreatmentPlan")
+            );
         }
     };
 }

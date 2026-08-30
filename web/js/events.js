@@ -141,7 +141,10 @@ function bindPatientEvents() {
     $$("[data-delete-patient]").forEach(
         (button) => {
             button.onclick = async () => {
-
+                if (window.AERODENT_DEMO) {
+                    toast(t("deleteDemoPatient"));
+                    return;
+                }
                 if (
                     !confirm(
                         t("confirmDeletePatient")
@@ -183,7 +186,7 @@ function bindPatientEvents() {
                     await refresh(true);
 
                     showUndo(
-                        "Patient deleted",
+                        t("patientDeleted"),
                         async () => {
                             await restorePatientBackup(
                                 backup
@@ -434,7 +437,7 @@ function bindAppointmentEvents() {
                     await refresh();
 
                     showUndo(
-                        "Appointment deleted",
+                        t("appointmentDeleted"),
                         async () => {
                             await dbPut(
                                 "appointments",
@@ -588,7 +591,7 @@ function bindXrayEvents() {
                     );
 
                     toast(
-                        "Unable to delete X-ray."
+                        t("unableDeleteXray")
                     );
                 }
             };
@@ -1157,22 +1160,25 @@ function bindKeyboardEvents() {
             }
 
             if (
-                event.key.toLowerCase() ===
-                "n"
+                event.key.toLowerCase() === "n"
+                ||
+                event.key.toLowerCase() === "ى"
             ) {
                 newPatient();
             }
 
             if (
-                event.key.toLowerCase() ===
-                "a"
+                event.key.toLowerCase() === "a"
+                ||
+                event.key.toLowerCase() === "ش"
             ) {
                 addAppointment();
             }
 
             if (
-                event.key.toLowerCase() ===
-                "p"
+                event.key.toLowerCase() === "p"
+                ||
+                event.key.toLowerCase() === "ط"
             ) {
                 state.view =
                     "patients";
@@ -1181,8 +1187,9 @@ function bindKeyboardEvents() {
             }
 
             if (
-                event.key.toLowerCase() ===
-                "o"
+                event.key.toLowerCase() === "o"
+                ||
+                event.key.toLowerCase() === "غ"
             ) {
                 state.view =
                     "odontogram";
@@ -1194,6 +1201,10 @@ function bindKeyboardEvents() {
                 event.ctrlKey &&
                 event.key.toLowerCase() ===
                 "k"
+                ||
+                event.metaKey &&
+                event.key.toLowerCase() ===
+                "ن"
             ) {
                 event.preventDefault();
 

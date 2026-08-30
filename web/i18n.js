@@ -66,8 +66,8 @@ const I18N = {
     start: "Start",
     end: "End",
     slot: "Slot duration",
-    export: "Export JSON",
-    import: "Import JSON",
+    export: "Export Excel",
+    import: "Import Excel",
     wipe: "Wipe database",
     saved: "Saved locally",
     booked: "Booked",
@@ -117,7 +117,6 @@ const I18N = {
     scheduled: "Scheduled",
     inProgress: "In Progress",
     completed: "Completed",
-    cancelled: "Cancelled",
     changeStatus: "Change status",
     treatmentPlan: "Treatment Plan",
     addTreatmentPlan: "Add treatment plan",
@@ -144,12 +143,17 @@ const I18N = {
     savePINBtn: "Save PIN",
     left: "Left",
     right: "Right",
+    deleteDemoPatient: "This demo patient can't be deleted",
+    demoOnePatient: "Demo mode allows one patient only.",
+    demoVersion: "This is a demo version of AeroDent",
+    demoTitle: "Demo Version",
+    featureDisabledInDemo: "This feature is disabled in demo mode.",
   },
   ar: {
     appName: "AeroDent",
     lockTitle: "AeroDent",
-    lockMessage: "أدخل كلمة المرور للاستمرار",
-    unlockBtn: "تسجيل",
+    lockMessage: "أدخل رمز PIN للمتابعة",
+    unlockBtn: "فتح القفل",
     tagline: "مركز إدارة العيادة",
     dashboard: "نظرة سريرية",
     odontogram: "مخطط الأسنان",
@@ -206,7 +210,7 @@ const I18N = {
     duration: "المدة",
     instructions: "التعليمات",
     upload: "رفع صورة",
-    clinic: "اسم العيادة",
+    clinic: "ملف العيادة",
     doctor: "الطبيب",
     address: "العنوان",
     currency: "العملة",
@@ -215,8 +219,8 @@ const I18N = {
     start: "من",
     end: "إلى",
     slot: "مدة الموعد",
-    export: "تصدير JSON",
-    import: "استيراد JSON",
+    export: "تصدير Excel",
+    import: "استيراد Excel",
     wipe: "مسح قاعدة البيانات",
     saved: "محفوظ محلياً",
     booked: "محجوز",
@@ -290,12 +294,14 @@ const I18N = {
     savePINBtn: "حفظ الرمز",
     left: "يسار",
     right: "يمين",
+    deleteDemoPatient: "لا يمكن حذف المريض في النسخة التجريبية",
+    demoOnePatient: "النسخة التجريبية تسمح بمريض واحد فقط",
+    demoVersion: "هذه نسخة تجريبية من AeroDent",
+    demoTitle: "نسخة تجريبية",
+    featureDisabledInDemo: "هذه الميزة معطلة في النسخة التجريبية",
   },
 };
-I18N.en.export = "Export Excel";
-I18N.ar.export = "تصدير Excel";
-I18N.en.import = "Import Excel";
-I18N.ar.import = "استيراد Excel";
+
 I18N.en.sidebarExpand = "Expand sidebar";
 I18N.ar.sidebarExpand = "توسيع القائمة";
 I18N.en.sidebarCollapse = "Collapse sidebar";
@@ -341,7 +347,87 @@ I18N.en.confirmDeletePatient =
   "Delete this patient and all related clinical records?";
 I18N.ar.confirmDeletePatient = "هل تريد حذف هذا المريض وكل سجلاته السريرية؟";
 let currentLanguage = "ar";
+I18N.en.noPhone = "No phone";
+I18N.ar.noPhone = "لا يوجد هاتف";
 
+I18N.en.female = "Female";
+I18N.ar.female = "أنثى";
+
+I18N.en.male = "Male";
+I18N.ar.male = "ذكر";
+
+I18N.en.appointmentWorkingHours =
+  "Appointment must be within clinic working hours.";
+I18N.ar.appointmentWorkingHours =
+  "يجب أن يكون الموعد ضمن ساعات عمل العيادة.";
+
+I18N.en.appointmentConflict =
+  "This time slot is already occupied.";
+I18N.ar.appointmentConflict =
+  "هذا الوقت محجوز بالفعل.";
+
+I18N.en.unableUpdateTreatment =
+  "Unable to update treatment.";
+I18N.ar.unableUpdateTreatment =
+  "تعذر تحديث العلاج.";
+
+I18N.en.patientDeleted =
+  "Patient deleted";
+I18N.ar.patientDeleted =
+  "تم حذف المريض";
+
+I18N.en.appointmentDeleted =
+  "Appointment deleted";
+I18N.ar.appointmentDeleted =
+  "تم حذف الموعد";
+
+I18N.en.unableDeleteXray =
+  "Unable to delete X-ray.";
+I18N.ar.unableDeleteXray =
+  "تعذر حذف الأشعة.";
+
+I18N.en.undo =
+  "Undo";
+I18N.ar.undo =
+  "تراجع";
+
+I18N.en.unableUndo =
+  "Unable to undo action.";
+I18N.ar.unableUndo =
+  "تعذر التراجع عن العملية.";
+
+I18N.en.routineExamination =
+  "Routine examination";
+I18N.ar.routineExamination =
+  "فحص روتيني";
+
+I18N.en.enterPIN =
+  "Please enter your PIN.";
+I18N.ar.enterPIN =
+  "يرجى إدخال رمز PIN.";
+
+I18N.en.noPINConfigured =
+  "No PIN has been configured.";
+I18N.ar.noPINConfigured =
+  "لم يتم إعداد رمز PIN.";
+
+I18N.en.tooManyAttempts =
+  "Too many attempts. Try again in {seconds}s.";
+I18N.ar.tooManyAttempts =
+  "محاولات كثيرة جداً. حاول مرة أخرى بعد {seconds} ثوانٍ.";
+
+I18N.en.pinSaveFailed =
+  "Unable to save PIN. Please try again.";
+I18N.ar.pinSaveFailed =
+  "تعذر حفظ رمز PIN. حاول مرة أخرى.";
+
+I18N.en.setupPIN = "Set up your PIN";
+I18N.ar.setupPIN = "إعداد رمز PIN";
+
+I18N.en.setupPINMessage =
+  "Create a 4–6 digit PIN to protect your clinic";
+I18N.ar.setupPINMessage =
+  "أنشئ رمز PIN من 4–6 أرقام لحماية عيادتك";
 function t(key) {
   return I18N[currentLanguage]?.[key] || I18N.en?.[key] || key;
 }

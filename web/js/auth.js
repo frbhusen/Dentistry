@@ -54,8 +54,9 @@ function lockApp() {
     $("#unlockSection").classList.remove("hidden");
     $("#setupPINSection").classList.add("hidden");
 
-    $("#lockTitle").textContent = "AeroDent";
-    $("#lockMessage").textContent = "Enter your PIN to continue";
+    $("#lockTitle").textContent = t("lockTitle");
+
+    $("#lockMessage").textContent = t("lockMessage");
 
     setTimeout(() => {
         $("#pinInput").focus();
@@ -93,9 +94,9 @@ function showPINSetup() {
     $("#unlockSection").classList.add("hidden");
     $("#setupPINSection").classList.remove("hidden");
 
-    $("#lockTitle").textContent = "Set up your PIN";
-    $("#lockMessage").textContent =
-        "Create a 4–6 digit PIN to protect your clinic";
+    $("#lockTitle").textContent = t("setupPIN");
+
+    $("#lockMessage").textContent = t("setupPINMessage");
 
     $("#pinError").textContent = "";
 
@@ -157,7 +158,7 @@ async function savePIN() {
         console.error("Failed to save PIN:", error);
 
         $("#pinError").textContent =
-            "Unable to save PIN. Please try again.";
+            t("pinSaveFailed");
     }
 }
 
@@ -167,17 +168,17 @@ let pinLockUntil = 0;
 async function verifyPIN() {
     if (Date.now() < pinLockUntil) {
         const secondsLeft = Math.ceil((pinLockUntil - Date.now()) / 1000);
-        $("#pinError").textContent = `Too many attempts. Try again in ${secondsLeft}s.`;
+        $("#pinError").textContent = t("tooManyAttempts").replace("{seconds}", secondsLeft);
         return;
     }
 
     const pin = $("#pinInput").value.trim();
     if (!pin) {
-        $("#pinError").textContent = "Please enter your PIN.";
+        $("#pinError").textContent = t("enterPIN");
         return;
     }
     if (!state.settings.pinHash) {
-        $("#pinError").textContent = "No PIN has been configured.";
+        $("#pinError").textContent = t("noPINConfigured");
         return;
     }
 

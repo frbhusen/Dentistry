@@ -141,7 +141,7 @@ function showUndo(message, action) {
     node.innerHTML = `
         <span>${esc(message)}</span>
         <button type="button" id="undoBtn">
-            Undo
+            ${t("undo")}
         </button>
     `;
 
@@ -163,7 +163,9 @@ function showUndo(message, action) {
         } catch (error) {
             console.error("Undo failed:", error);
 
-            toast("Unable to undo action.");
+            toast(
+                t("unableUndo")
+            );
         }
     };
 
