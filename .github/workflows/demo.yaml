@@ -41,7 +41,7 @@ jobs:
           cp web/sw.js _site/assets/
 
           cp web/js/*.js _site/assets/js/
-          cp web/icons/* _site/assets/icons/
+          cp -r web/icons/* _site/assets/icons/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
